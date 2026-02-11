@@ -134,7 +134,7 @@ class QuestionnaireEngine:
     def _read_input(self) -> str:
         """Read user input via the configured input function."""
         if self._input_fn is not None:
-            return self._input_fn()
+            return str(self._input_fn())
         # Default: Rich console prompt is wired in by the CLI command
         raise RuntimeError(
             "No input function configured. "

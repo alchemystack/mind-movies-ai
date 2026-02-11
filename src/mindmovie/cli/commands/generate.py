@@ -21,6 +21,7 @@ from mindmovie.config import load_settings
 from mindmovie.core.cost_estimator import CostBreakdown
 from mindmovie.core.pipeline import PipelineError, PipelineOrchestrator
 from mindmovie.state import PipelineStage, StateManager
+from mindmovie.video import CompositionError
 
 
 def _display_assistant(message: str) -> None:
@@ -155,7 +156,7 @@ def generate(
                 dry_run=dry_run,
             )
         )
-    except PipelineError as exc:
+    except (PipelineError, CompositionError) as exc:
         print_error(str(exc))
         print_info("Run 'mindmovie generate' to retry from the last checkpoint.")
         raise typer.Exit(code=1)

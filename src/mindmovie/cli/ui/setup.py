@@ -16,7 +16,11 @@ from .console import (
 
 
 def check_system_dependencies() -> list[str]:
-    """Check for required system dependencies (ffmpeg, imagemagick).
+    """Check for required system dependencies (ffmpeg).
+
+    Note: ImageMagick is NOT required — Pillow handles all text
+    rendering, avoiding the ImageMagick dependency that MoviePy's
+    TextClip would otherwise need.
 
     Returns:
         List of missing dependency names.
@@ -24,8 +28,6 @@ def check_system_dependencies() -> list[str]:
     missing = []
     if not shutil.which("ffmpeg"):
         missing.append("ffmpeg")
-    if not shutil.which("magick") and not shutil.which("convert"):
-        missing.append("imagemagick")
     return missing
 
 
@@ -61,9 +63,9 @@ def run_setup_check(settings: Settings) -> bool:
         all_ok = False
         print_warning(f"Missing system dependencies: {', '.join(missing_deps)}")
         print_muted("  Install with:")
-        print_muted("    macOS:  brew install ffmpeg imagemagick")
-        print_muted("    Linux:  apt install ffmpeg imagemagick")
-        print_muted("    Windows: choco install ffmpeg imagemagick")
+        print_muted("    macOS:  brew install ffmpeg")
+        print_muted("    Linux:  apt install ffmpeg")
+        print_muted("    Windows: choco install ffmpeg")
         console.print()
 
     # --- Check for .env file ---
