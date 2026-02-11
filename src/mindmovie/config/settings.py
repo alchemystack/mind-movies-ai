@@ -48,10 +48,6 @@ class VideoSettings(BaseSettings):
         default="16:9",
         description="Aspect ratio: 16:9 or 9:16",
     )
-    generate_audio: bool = Field(
-        default=True,
-        description="Generate audio with video (Veo 3+ only)",
-    )
     max_concurrent: int = Field(
         default=5,
         ge=1,

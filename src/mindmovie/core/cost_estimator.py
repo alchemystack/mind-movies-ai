@@ -14,17 +14,17 @@ from mindmovie.models.scenes import MindMovieSpec
 logger = logging.getLogger(__name__)
 
 # ── Video generation pricing (USD per second of generated video) ────────────
-# Mapping: model_id -> (cost_per_sec_with_audio, cost_per_sec_no_audio)
-VIDEO_PRICING: dict[str, tuple[float, float]] = {
-    "veo-3.1-generate-preview": (0.40, 0.30),
-    "veo-3.1-fast-generate-preview": (0.15, 0.10),
-    "veo-3.0-generate-001": (0.40, 0.30),
-    "veo-3.0-fast-generate-001": (0.15, 0.10),
-    "veo-2.0-generate-001": (0.00, 0.35),  # Veo 2 has no audio option
+# Veo 3.x models natively generate audio; single rate per model.
+VIDEO_PRICING: dict[str, float] = {
+    "veo-3.1-generate-preview": 0.40,
+    "veo-3.1-fast-generate-preview": 0.15,
+    "veo-3.0-generate-001": 0.40,
+    "veo-3.0-fast-generate-001": 0.15,
+    "veo-2.0-generate-001": 0.35,
 }
 
 # Default fallback for unknown models
-_DEFAULT_VIDEO_COST_PER_SEC = (0.15, 0.10)
+_DEFAULT_VIDEO_COST_PER_SEC = 0.15
 
 # ── LLM pricing (Claude Sonnet) ────────────────────────────────────────────
 # Approximate cost for scene generation (one structured call)
@@ -150,13 +150,7 @@ class CostEstimator:
             Estimated cost in USD.
         """
         model = self.settings.video.model
-        with_audio = self.settings.video.generate_audio
-
-        cost_with_audio, cost_no_audio = VIDEO_PRICING.get(
-            model, _DEFAULT_VIDEO_COST_PER_SEC
-        )
-
-        cost_per_sec = cost_with_audio if with_audio else cost_no_audio
+        cost_per_sec = VIDEO_PRICING.get(model, _DEFAULT_VIDEO_COST_PER_SEC)
         total_seconds = num_scenes * scene_duration
 
         return cost_per_sec * total_seconds

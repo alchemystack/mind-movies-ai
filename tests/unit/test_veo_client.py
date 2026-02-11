@@ -84,8 +84,7 @@ class TestVeoClientRetry:
 
 class TestVeoClientCost:
     def test_cost_estimation(self, veo_client: VeoClient) -> None:
-        assert veo_client.estimate_cost(8, with_audio=True) == pytest.approx(8 * 0.15)
-        assert veo_client.estimate_cost(8, with_audio=False) == pytest.approx(8 * 0.10)
+        assert veo_client.estimate_cost(8) == pytest.approx(8 * 0.15)
 
     def test_all_models_in_cost_table(self) -> None:
         expected = {"veo-3.1-fast-generate-preview", "veo-3.1-generate-preview",

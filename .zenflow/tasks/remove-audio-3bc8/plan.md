@@ -28,27 +28,27 @@ Key decision: Veo 3.x natively generates audio — there is no opt-in toggle. Re
 
 ---
 
-### [ ] Step: Implementation
+### [x] Step: Implementation
 
-Remove `generate_audio` parameter from API layer, protocol, settings, cost estimation, CLI display, and video generator. Update affected unit tests. Verify with full test suite, mypy, and ruff.
+Removed `generate_audio` parameter from API layer, protocol, settings, cost estimation, CLI display, and video generator. Updated affected unit tests. All verification passed.
 
-**Source files to modify (6):**
-- `src/mindmovie/api/veo_client.py` — Remove `generate_audio` param from `_generate_and_poll()`, `generate_video()`, `GenerateVideosConfig`; simplify `_COST_PER_SECOND` to single rate; simplify `estimate_cost()`
-- `src/mindmovie/api/base.py` — Remove `generate_audio` from `VideoGeneratorProtocol.generate_video()`, `with_audio` from `estimate_cost()`
-- `src/mindmovie/config/settings.py` — Remove `generate_audio` field from `VideoSettings`
-- `src/mindmovie/assets/video_generator.py` — Remove `generate_audio=...` from `generate_video()` call
-- `src/mindmovie/core/cost_estimator.py` — Simplify `VIDEO_PRICING` to single rate per model; remove audio branching in `estimate_video_cost()`
-- `src/mindmovie/cli/commands/config_cmd.py` — Remove "Generate Audio" from config display
+**Source files modified (6):**
+- `src/mindmovie/api/veo_client.py` — Removed `generate_audio` param; simplified cost dict to single rate
+- `src/mindmovie/api/base.py` — Removed from protocol
+- `src/mindmovie/config/settings.py` — Removed `generate_audio` field
+- `src/mindmovie/assets/video_generator.py` — Removed kwarg
+- `src/mindmovie/core/cost_estimator.py` — Simplified to single rate per model
+- `src/mindmovie/cli/commands/config_cmd.py` — Removed from display
 
-**Test files to update (2):**
-- `tests/unit/test_veo_client.py` — Remove `with_audio` from cost tests; update cost table assertions
-- `tests/unit/test_cost_estimator.py` — Remove `audio` param from `_settings()` helper; fix expected costs
+**Test files updated (2):**
+- `tests/unit/test_veo_client.py` — Updated cost test
+- `tests/unit/test_cost_estimator.py` — Updated settings helper and expected costs
 
 **Verification:**
-- [ ] `ruff check src/ tests/`
-- [ ] `mypy src/`
-- [ ] `pytest tests/ -v`
-- [ ] `grep -r "generate_audio" src/` returns zero matches
-- [ ] `grep -r "with_audio" src/` returns zero matches
+- [x] `ruff check src/ tests/` — All checks passed
+- [x] `mypy src/` — No issues found in 41 source files
+- [x] `pytest tests/ -v` — 116 passed
+- [x] `grep -r "generate_audio" src/` — Zero matches
+- [x] `grep -r "with_audio" src/` — Only MoviePy's `VideoClip.with_audio()` (unrelated)
 
-After completion, write report to `.zenflow/tasks/remove-audio-3bc8/report.md`.
+Report saved to `.zenflow/tasks/remove-audio-3bc8/report.md`.
