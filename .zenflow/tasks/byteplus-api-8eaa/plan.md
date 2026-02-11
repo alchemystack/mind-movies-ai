@@ -18,50 +18,79 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: a4b83ef5-88b3-43cb-99e3-2c698024249a -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Important: unit tests must be part of each implementation task, not separate tasks. Each task should implement the code and its tests together, if relevant.
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Assessed difficulty as **medium**. Spec saved to `.zenflow/tasks/byteplus-api-8eaa/spec.md`.
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Configuration & Settings
+<!-- depends-on: Technical Specification -->
 
-Implement the task according to the technical specification and general engineering best practices.
+Update the settings layer to support provider selection and BytePlus API key.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+1. Add `byteplus_api_key: SecretStr` to `APISettings` in `src/mindmovie/config/settings.py`
+2. Add `provider: Literal["veo", "byteplus"]` field (default `"byteplus"`) and `generate_audio: bool` (default `True`) to `VideoSettings`
+3. Add `"480p"` to the `resolution` Literal (BytePlus supports it)
+4. Update defaults: `model` to `"bytedance-seedance-1-5-pro"`, `resolution` to `"720p"`
+5. Make `has_required_api_keys()` and `get_missing_api_keys()` provider-aware
+6. Add `BYTEPLUS_API_KEY` to `.env.example`
+7. Update `config.example.yaml` with `provider` field and BytePlus options
+8. Add `byteplus-python-sdk-v2` to `pyproject.toml` dependencies
+9. Add `byteplussdkarkruntime.*` to mypy `ignore_missing_imports` in `pyproject.toml`
+10. Run `ruff check src/` and `mypy src/` to verify
+11. Run `pytest tests/` to verify no existing tests break
+
+---
+
+### [ ] Step: BytePlusClient Implementation
+<!-- depends-on: Configuration & Settings -->
+
+Create the BytePlus video generation client with tests.
+
+1. Create `src/mindmovie/api/byteplus_client.py`:
+   - `BytePlusClient` class with `__init__(api_key, model, poll_interval, generate_audio)`
+   - `_build_prompt_text()` helper to append inline params (`--ratio`, `--resolution`, `--duration`, `--generateaudio`)
+   - `_generate_and_poll()` synchronous method: create task -> poll status -> download video to disk
+   - `generate_video()` async method with tenacity retry decorator, delegates via `asyncio.to_thread()`
+   - `estimate_cost()` using token-based pricing formula
+2. Create `tests/unit/test_byteplus_client.py`:
+   - Test happy path (create -> poll -> download -> return path)
+   - Test polling (pending -> succeeded)
+   - Test failed task -> RuntimeError
+   - Test retry on transient errors (ConnectionError, TimeoutError)
+   - Test no retry on ValueError
+   - Test prompt building (inline params appended correctly)
+   - Test cost estimation
+3. Run `ruff check src/ tests/` and `mypy src/`
+4. Run `pytest tests/` — all tests must pass
+
+---
+
+### [ ] Step: Factory & Pipeline Wiring
+<!-- depends-on: BytePlusClient Implementation -->
+
+Wire up provider selection via factory function, update pipeline and CLI.
+
+1. Create `src/mindmovie/api/factory.py` with `create_video_client(settings) -> VideoGeneratorProtocol`
+2. Update `src/mindmovie/api/__init__.py` to export `BytePlusClient` and `create_video_client`
+3. Update `src/mindmovie/core/pipeline.py`:
+   - Replace hardcoded VeoClient instantiation (lines 209-220) with `create_video_client()`
+   - Remove direct VeoClient import at top of file
+   - Remove provider-specific API key check (factory handles it)
+4. Update `src/mindmovie/cli/commands/render.py`:
+   - Replace hardcoded VeoClient instantiation (lines 121-127) with `create_video_client()`
+   - Replace `validate_api_keys_for_command(settings, require_gemini=True)` with provider-aware validation
+5. Update `src/mindmovie/core/cost_estimator.py`:
+   - Add `"bytedance-seedance-1-5-pro": 0.026` to `VIDEO_PRICING`
+6. Update `src/mindmovie/cli/ui/setup.py`:
+   - Add `require_byteplus` param to `validate_api_keys_for_command`
+   - Add `BYTEPLUS_API_KEY` entry to `_KEY_HELP` dict
+7. Update `src/mindmovie/cli/commands/config_cmd.py`:
+   - Show `Provider` in video settings table
+   - Show `BYTEPLUS_API_KEY` (masked) in API keys section
+8. Write tests for factory function (correct client type per provider, error on missing key)
+9. Run `ruff check src/ tests/` and `mypy src/`
+10. Run `pytest tests/ -v` — all tests (old + new) must pass
+11. Write report to `.zenflow/tasks/byteplus-api-8eaa/report.md`
