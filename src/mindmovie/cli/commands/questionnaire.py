@@ -51,8 +51,10 @@ def questionnaire(
     )
     print_info('Type "skip" to skip a category, or "done" to finish early.\n')
 
-    api_key = settings.api.anthropic_api_key.get_secret_value()
-    client = AnthropicClient(api_key=api_key)
+    client = AnthropicClient(
+        api_key=settings.api.anthropic_api_key.get_secret_value(),
+        model=settings.api.anthropic_model,
+    )
     state_mgr = StateManager(build_dir=settings.build_dir)
 
     def _display_assistant(message: str) -> None:
@@ -70,6 +72,12 @@ def questionnaire(
         console.print("\n")
         print_info("Questionnaire interrupted. No goals were saved.")
         raise typer.Exit(code=0)
+    except anthropic.NotFoundError as exc:
+        print_error(
+            f"Anthropic model not found: {exc}. "
+            "Check the configured model name (ANTHROPIC_MODEL or config.yaml)."
+        )
+        raise typer.Exit(code=1)
     except anthropic.AuthenticationError:
         print_error(
             "Invalid ANTHROPIC_API_KEY. "

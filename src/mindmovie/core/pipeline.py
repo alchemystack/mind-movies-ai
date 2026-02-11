@@ -135,14 +135,16 @@ class PipelineOrchestrator:
 
     async def _run_questionnaire(self) -> None:
         """Run the interactive questionnaire and persist goals."""
-        api_key = self.settings.api.anthropic_api_key.get_secret_value()
-        if not api_key:
+        if not self.settings.api.anthropic_api_key.get_secret_value():
             raise PipelineError(
                 "ANTHROPIC_API_KEY is not set. "
                 "Set it in your .env file or environment variables."
             )
 
-        client = AnthropicClient(api_key=api_key)
+        client = AnthropicClient(
+            api_key=self.settings.api.anthropic_api_key.get_secret_value(),
+            model=self.settings.api.anthropic_model,
+        )
         engine = QuestionnaireEngine(
             client=client,
             input_fn=self._input_fn,
@@ -157,15 +159,17 @@ class PipelineOrchestrator:
 
     async def _run_scene_generation(self) -> MindMovieSpec:
         """Generate scenes from persisted goals and save them."""
-        api_key = self.settings.api.anthropic_api_key.get_secret_value()
-        if not api_key:
+        if not self.settings.api.anthropic_api_key.get_secret_value():
             raise PipelineError(
                 "ANTHROPIC_API_KEY is not set. "
                 "Set it in your .env file or environment variables."
             )
 
         goals = self.state_manager.load_goals()
-        client = AnthropicClient(api_key=api_key)
+        client = AnthropicClient(
+            api_key=self.settings.api.anthropic_api_key.get_secret_value(),
+            model=self.settings.api.anthropic_model,
+        )
         generator = SceneGenerator(
             client=client, num_scenes=self.settings.movie.num_scenes
         )
@@ -204,15 +208,14 @@ class PipelineOrchestrator:
 
     async def _run_video_generation(self, spec: MindMovieSpec) -> None:
         """Generate video clips for all pending scenes."""
-        gemini_key = self.settings.api.gemini_api_key.get_secret_value()
-        if not gemini_key:
+        if not self.settings.api.gemini_api_key.get_secret_value():
             raise PipelineError(
                 "GEMINI_API_KEY is not set. "
                 "Set it in your .env file or environment variables."
             )
 
         video_client = VeoClient(
-            api_key=gemini_key,
+            api_key=self.settings.api.gemini_api_key.get_secret_value(),
             model=self.settings.video.model,
         )
         generator = AssetGenerator(

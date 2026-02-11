@@ -24,6 +24,11 @@ class APISettings(BaseSettings):
         validation_alias="GEMINI_API_KEY",
         description="Google Gemini/Veo API key (video generation)",
     )
+    anthropic_model: str = Field(
+        default="claude-opus-4-20250514",
+        validation_alias="ANTHROPIC_MODEL",
+        description="Anthropic model ID for questionnaire and scene generation",
+    )
 
 
 class VideoSettings(BaseSettings):

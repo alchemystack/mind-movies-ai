@@ -3,6 +3,7 @@
 import asyncio
 from pathlib import Path
 
+import anthropic
 import typer
 
 from mindmovie.cli.ui.console import (
@@ -156,6 +157,18 @@ def generate(
                 dry_run=dry_run,
             )
         )
+    except anthropic.NotFoundError as exc:
+        print_error(
+            f"Anthropic model not found: {exc}. "
+            "Check the configured model name (ANTHROPIC_MODEL or config.yaml)."
+        )
+        raise typer.Exit(code=1)
+    except anthropic.AuthenticationError:
+        print_error(
+            "Invalid ANTHROPIC_API_KEY. "
+            "Check your key at https://console.anthropic.com/settings/keys"
+        )
+        raise typer.Exit(code=1)
     except (PipelineError, CompositionError) as exc:
         print_error(str(exc))
         print_info("Run 'mindmovie generate' to retry from the last checkpoint.")

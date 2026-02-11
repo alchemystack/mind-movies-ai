@@ -121,9 +121,8 @@ def render(
     # --- Create video client ---
     from mindmovie.api import VeoClient
 
-    gemini_key = settings.api.gemini_api_key.get_secret_value()
     video_client = VeoClient(
-        api_key=gemini_key,
+        api_key=settings.api.gemini_api_key.get_secret_value(),
         model=settings.video.model,
     )
 
