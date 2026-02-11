@@ -30,11 +30,11 @@ video:
 
 # Mind movie structure settings
 movie:
-  # Duration of each scene in seconds (video clips are 8s from Veo)
-  scene_duration: 8
+  # Duration of each scene in seconds (BytePlus supports 2-12s)
+  scene_duration: 12
 
   # Target number of scenes (10-15 recommended)
-  num_scenes: 12
+  num_scenes: 10
 
   # Title card duration in seconds
   title_duration: 5

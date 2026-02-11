@@ -73,7 +73,7 @@ class MindMovieSpec(BaseModel):
 
     def total_duration(
         self,
-        scene_duration: int = 8,
+        scene_duration: int = 12,
         title_duration: int = 5,
         closing_duration: int = 5,
     ) -> int:

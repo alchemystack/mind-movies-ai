@@ -102,13 +102,13 @@ class MovieSettings(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
 
     scene_duration: int = Field(
-        default=8,
+        default=12,
         ge=5,
         le=15,
         description="Duration of each scene in seconds",
     )
     num_scenes: int = Field(
-        default=12,
+        default=10,
         ge=10,
         le=15,
         description="Target number of scenes (10-15 recommended)",
