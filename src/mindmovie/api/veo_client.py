@@ -118,6 +118,10 @@ class VeoClient:
             )
 
         video = operation.response.generated_videos[0]
+        if video.video is None:
+            raise RuntimeError(
+                "Video generation failed: video object is empty in Veo response"
+            )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         video.video.save(str(output_path))
 

@@ -28,18 +28,13 @@ class TestCheckSystemDependencies:
     def test_ffmpeg_found(self) -> None:
         with patch("mindmovie.cli.ui.setup.shutil.which", return_value="/usr/bin/ffmpeg"):
             missing = check_system_dependencies()
-        # ffmpeg is found; imagemagick might or might not be
         assert "ffmpeg" not in missing
 
     def test_ffmpeg_not_found(self) -> None:
-        def _which(name: str) -> str | None:
-            # Nothing found
-            return None
-
-        with patch("mindmovie.cli.ui.setup.shutil.which", side_effect=_which):
+        with patch("mindmovie.cli.ui.setup.shutil.which", return_value=None):
             missing = check_system_dependencies()
         assert "ffmpeg" in missing
-        assert "imagemagick" in missing
+        assert "imagemagick" not in missing  # Pillow handles text rendering
 
 
 class TestValidateApiKeysForCommand:

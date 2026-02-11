@@ -131,7 +131,7 @@ def render_title_card(
     line_heights: list[int] = []
     for line in lines:
         bbox = font.getbbox(line)
-        line_heights.append(bbox[3] - bbox[1])
+        line_heights.append(int(bbox[3] - bbox[1]))
 
     line_spacing = int(font_size * 0.4)
     total_height = sum(line_heights) + line_spacing * (len(lines) - 1)
@@ -222,7 +222,7 @@ def render_affirmation_overlay(
     line_heights: list[int] = []
     for line in lines:
         bbox = font.getbbox(line)
-        line_heights.append(bbox[3] - bbox[1])
+        line_heights.append(int(bbox[3] - bbox[1]))
 
     line_spacing = int(font_size * 0.3)
     total_height = sum(line_heights) + line_spacing * (len(lines) - 1)

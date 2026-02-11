@@ -78,7 +78,7 @@ class AnthropicClient:
         # Extract text from the first text content block
         for block in response.content:
             if block.type == "text":
-                return block.text
+                return str(block.text)
 
         return ""
 
@@ -91,7 +91,7 @@ class AnthropicClient:
     async def generate_structured(
         self,
         messages: list[dict[str, Any]],
-        schema: type,
+        schema: type[Any],
         system_prompt: str | None = None,
         max_tokens: int = 4096,
     ) -> dict[str, Any]:
@@ -142,9 +142,10 @@ class AnthropicClient:
         # Extract the tool-use block
         for block in response.content:
             if block.type == "tool_use" and block.name == tool_name:
-                result = block.input
+                result: Any = block.input
                 if isinstance(result, str):
-                    return json.loads(result)
+                    parsed: dict[str, Any] = json.loads(result)
+                    return parsed
                 return dict(result)
 
         raise ValueError(
