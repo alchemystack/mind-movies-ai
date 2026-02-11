@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -52,16 +52,32 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Add data models and update questionnaire system prompt
 
-Implement the task according to the technical specification and general engineering best practices.
+Implement the data model changes and questionnaire prompt changes together, plus their tests.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+1. Add `PhysicalAppearance` model to `src/mindmovie/models/goals.py`
+2. Add `appearance: PhysicalAppearance | None` and `initial_vision: str | None` fields to `ExtractedGoals`
+3. Rewrite `SYSTEM_PROMPT` in `src/mindmovie/core/questionnaire.py` to:
+   - Ask for pre-existing vision/summary first
+   - Ask about physical appearance second
+   - Then proceed with the 6 life categories as before
+   - Update the completion JSON schema in the prompt to include `appearance` and `initial_vision`
+4. Update `tests/fixtures/sample_goals.json` to include the new fields
+5. Update `tests/unit/test_questionnaire.py`:
+   - Update `SAMPLE_GOALS_JSON` with appearance and initial_vision
+   - Add test for parsing with appearance present
+   - Add test for parsing with appearance absent (backward compat)
+   - Update system prompt assertion to check for appearance keywords
+6. Run `ruff check src/ tests/` and `mypy src/` and `pytest tests/unit/ -v`
+
+### [ ] Step: Update scene generation to use appearance data
+
+Propagate appearance into scene generation prompts and update downstream tests/fixtures.
+
+1. Add `SUBJECT APPEARANCE` section to `GENERATION_PROMPT` in `src/mindmovie/core/scene_generator.py`
+2. Update `_build_user_message()` to include `appearance.description` and `initial_vision` when present
+3. Update `tests/fixtures/sample_scenes.json` video prompts to include appearance-aware descriptions
+4. Run `ruff check src/ tests/` and `mypy src/` and `pytest tests/ -v` (full test suite)
+5. Write report to `{@artifacts_path}/report.md`
+
