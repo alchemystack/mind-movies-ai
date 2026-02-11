@@ -89,6 +89,8 @@ def validate_api_keys_for_command(
     *,
     require_anthropic: bool = False,
     require_gemini: bool = False,
+    require_byteplus: bool = False,
+    require_video_provider: bool = False,
 ) -> bool:
     """Validate that specific API keys are set, with actionable error messages.
 
@@ -96,6 +98,9 @@ def validate_api_keys_for_command(
         settings: The loaded application settings.
         require_anthropic: Whether ANTHROPIC_API_KEY is required.
         require_gemini: Whether GEMINI_API_KEY is required.
+        require_byteplus: Whether BYTEPLUS_API_KEY is required.
+        require_video_provider: If True, require the API key for the
+            currently configured video provider (reads ``settings.video.provider``).
 
     Returns:
         True if all required keys are present, False otherwise.
@@ -113,6 +118,25 @@ def validate_api_keys_for_command(
         if not key:
             _print_key_help("GEMINI_API_KEY")
             ok = False
+
+    if require_byteplus:
+        key = settings.api.byteplus_api_key.get_secret_value()
+        if not key:
+            _print_key_help("BYTEPLUS_API_KEY")
+            ok = False
+
+    if require_video_provider:
+        provider = settings.video.provider
+        if provider == "veo":
+            key = settings.api.gemini_api_key.get_secret_value()
+            if not key:
+                _print_key_help("GEMINI_API_KEY")
+                ok = False
+        elif provider == "byteplus":
+            key = settings.api.byteplus_api_key.get_secret_value()
+            if not key:
+                _print_key_help("BYTEPLUS_API_KEY")
+                ok = False
 
     if not ok:
         console.print()
@@ -136,5 +160,9 @@ _KEY_HELP: dict[str, str] = {
     "GEMINI_API_KEY": (
         "GEMINI_API_KEY is not set. "
         "Get one at https://aistudio.google.com/apikey"
+    ),
+    "BYTEPLUS_API_KEY": (
+        "BYTEPLUS_API_KEY is not set. "
+        "Get one at https://console.byteplus.com/ (ModelArk API Keys)"
     ),
 }

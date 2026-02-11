@@ -15,12 +15,16 @@ logger = logging.getLogger(__name__)
 
 # ── Video generation pricing (USD per second of generated video) ────────────
 # Veo 3.x models natively generate audio; single rate per model.
+# BytePlus Seedance pricing derived from token formula at 720p/24fps:
+#   tokens = (1280 * 720 * 24 * duration) / 1024 ≈ 21,600 tokens/s
+#   With audio ($1.2/M tokens): ~$0.026/s
 VIDEO_PRICING: dict[str, float] = {
     "veo-3.1-generate-preview": 0.40,
     "veo-3.1-fast-generate-preview": 0.15,
     "veo-3.0-generate-001": 0.40,
     "veo-3.0-fast-generate-001": 0.15,
     "veo-2.0-generate-001": 0.35,
+    "seedance-1-5-pro-251215": 0.026,
 }
 
 # Default fallback for unknown models

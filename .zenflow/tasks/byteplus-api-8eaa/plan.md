@@ -67,7 +67,8 @@ Create the BytePlus video generation client with tests.
 
 ---
 
-### [ ] Step: Factory & Pipeline Wiring
+### [x] Step: Factory & Pipeline Wiring
+<!-- chat-id: f8c49fab-537d-407f-8134-ce28fd2b69b0 -->
 <!-- depends-on: BytePlusClient Implementation -->
 
 Wire up provider selection via factory function, update pipeline and CLI.

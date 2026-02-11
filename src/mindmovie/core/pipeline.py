@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from mindmovie.api.anthropic_client import AnthropicClient
-from mindmovie.api.veo_client import VeoClient
+from mindmovie.api.factory import create_video_client
 from mindmovie.assets import AssetGenerator
 from mindmovie.config.settings import Settings
 from mindmovie.core.cost_estimator import CostEstimator
@@ -208,16 +208,10 @@ class PipelineOrchestrator:
 
     async def _run_video_generation(self, spec: MindMovieSpec) -> None:
         """Generate video clips for all pending scenes."""
-        if not self.settings.api.gemini_api_key.get_secret_value():
-            raise PipelineError(
-                "GEMINI_API_KEY is not set. "
-                "Set it in your .env file or environment variables."
-            )
-
-        video_client = VeoClient(
-            api_key=self.settings.api.gemini_api_key.get_secret_value(),
-            model=self.settings.video.model,
-        )
+        try:
+            video_client = create_video_client(self.settings)
+        except ValueError as exc:
+            raise PipelineError(str(exc)) from exc
         generator = AssetGenerator(
             video_client=video_client,
             state_manager=self.state_manager,
