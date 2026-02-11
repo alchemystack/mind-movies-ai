@@ -52,7 +52,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Add data models and update questionnaire system prompt
+### [x] Step: Add data models and update questionnaire system prompt
+<!-- chat-id: 05a4dc0d-4425-4d09-aa96-9573e6099efd -->
 
 Implement the data model changes and questionnaire prompt changes together, plus their tests.
 
