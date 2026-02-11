@@ -82,6 +82,36 @@ class TestVeoClientRetry:
         assert veo_client.client.models.generate_videos.call_count == 1
 
 
+class TestVeoClientConfig:
+    """Tests for correct API config parameters passed to Veo."""
+
+    async def test_person_generation_is_allow_all(
+        self, veo_client: VeoClient, tmp_path: Path
+    ) -> None:
+        """Regression: text-to-video requires person_generation='allow_all'."""
+        output = tmp_path / "scene.mp4"
+        veo_client.client.models.generate_videos.return_value = _make_operation(done=True)
+        await veo_client.generate_video(prompt="test", output_path=output)
+
+        config = veo_client.client.models.generate_videos.call_args
+        passed_config = config.kwargs.get("config") or config[1].get("config")
+        assert passed_config.person_generation == "allow_all"
+
+    async def test_resolution_sent_lowercase(
+        self, veo_client: VeoClient, tmp_path: Path
+    ) -> None:
+        """Regression: Veo API expects lowercase resolution values (e.g. '4k' not '4K')."""
+        output = tmp_path / "scene.mp4"
+        veo_client.client.models.generate_videos.return_value = _make_operation(done=True)
+        await veo_client.generate_video(
+            prompt="test", output_path=output, resolution="4K"
+        )
+
+        config = veo_client.client.models.generate_videos.call_args
+        passed_config = config.kwargs.get("config") or config[1].get("config")
+        assert passed_config.resolution == "4k"
+
+
 class TestVeoClientCost:
     def test_cost_estimation(self, veo_client: VeoClient) -> None:
         assert veo_client.estimate_cost(8) == pytest.approx(8 * 0.15)

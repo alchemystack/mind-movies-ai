@@ -79,8 +79,8 @@ class VeoClient:
         """
         config = types.GenerateVideosConfig(
             aspect_ratio=aspect_ratio,
-            resolution=resolution,
-            person_generation="allow_adult",
+            resolution=resolution.lower(),
+            person_generation="allow_all",
             number_of_videos=1,
         )
         if negative_prompt:
