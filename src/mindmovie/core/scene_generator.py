@@ -1,12 +1,7 @@
-"""Scene generation engine for Mind Movie Generator.
-
-Transforms extracted goals from the questionnaire into a complete
-MindMovieSpec with cinematic video prompts and affirmations. Uses
-Claude's structured output to guarantee valid JSON that conforms
-to the MindMovieSpec Pydantic schema.
-"""
+"""Scene generation — transforms extracted goals into a MindMovieSpec."""
 
 import logging
+from typing import Any
 
 from mindmovie.api.anthropic_client import AnthropicClient
 from mindmovie.models.goals import ExtractedGoals
@@ -75,41 +70,26 @@ TITLE:
 Skip categories that are marked as skipped — do not generate scenes for them."""
 
 
-class SceneGenerator:
-    """Generates structured scene specifications from extracted goals.
+def _unwrap_llm_result(result: dict[str, Any]) -> dict[str, Any]:
+    """Unwrap LLM structured output if nested under an envelope key.
 
-    Takes the goals produced by the questionnaire engine and sends them
-    to Claude with a scene-design system prompt. Claude returns a
-    MindMovieSpec via structured output (tool-use), which is then
-    validated against the Pydantic schema.
+    Claude's tool-use sometimes wraps the response in {"output": {...}}.
+    This handles both wrapped and flat responses.
     """
+    if "output" in result and isinstance(result["output"], dict):
+        return result["output"]
+    return result
+
+
+class SceneGenerator:
+    """Generates a MindMovieSpec from extracted goals via Claude structured output."""
 
     def __init__(self, client: AnthropicClient, *, num_scenes: int = 12) -> None:
-        """Initialize the scene generator.
-
-        Args:
-            client: Anthropic API client for Claude interactions.
-            num_scenes: Target number of scenes to generate (10-15).
-        """
         self.client = client
         self.num_scenes = max(10, min(15, num_scenes))
 
     async def generate(self, goals: ExtractedGoals) -> MindMovieSpec:
-        """Generate a complete mind movie specification from extracted goals.
-
-        Sends the goals to Claude with a scene-design system prompt.
-        Claude produces structured JSON matching the MindMovieSpec schema
-        via tool-use, which is validated by Pydantic.
-
-        Args:
-            goals: Extracted goals from the questionnaire session.
-
-        Returns:
-            Validated MindMovieSpec with scenes, affirmations, and prompts.
-
-        Raises:
-            ValueError: If structured output cannot be parsed or validated.
-        """
+        """Generate a complete mind movie specification from extracted goals."""
         user_content = self._build_user_message(goals)
 
         logger.info(
@@ -124,7 +104,7 @@ class SceneGenerator:
             system_prompt=GENERATION_PROMPT,
         )
 
-        spec = MindMovieSpec.model_validate(result)
+        spec = MindMovieSpec.model_validate(_unwrap_llm_result(result))
 
         logger.info(
             "Generated %d scenes across %d categories",
@@ -135,17 +115,7 @@ class SceneGenerator:
         return spec
 
     def _build_user_message(self, goals: ExtractedGoals) -> str:
-        """Build the user message containing goals for scene generation.
-
-        Formats the extracted goals into a clear prompt that tells Claude
-        exactly how many scenes to produce and which categories to cover.
-
-        Args:
-            goals: Extracted goals from the questionnaire.
-
-        Returns:
-            Formatted string for the user message.
-        """
+        """Build the user message containing goals for scene generation."""
         parts: list[str] = []
         parts.append(f"Title: {goals.title}")
         parts.append(f"Target number of scenes: {self.num_scenes}")

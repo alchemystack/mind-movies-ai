@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 from pydantic import ValidationError
 
-from mindmovie.core.scene_generator import GENERATION_PROMPT, SceneGenerator
+from mindmovie.core.scene_generator import GENERATION_PROMPT, SceneGenerator, _unwrap_llm_result
 from mindmovie.models.goals import ExtractedGoals
 from mindmovie.models.scenes import MindMovieSpec
 
@@ -31,6 +31,21 @@ def mock_client(sample_scenes_data: dict) -> AsyncMock:
     return client
 
 
+class TestUnwrapLLMResult:
+    def test_unwraps_output_envelope(self) -> None:
+        data = {"title": "Test", "scenes": []}
+        wrapped = {"output": data}
+        assert _unwrap_llm_result(wrapped) == data
+
+    def test_passes_through_flat_response(self) -> None:
+        data = {"title": "Test", "scenes": []}
+        assert _unwrap_llm_result(data) == data
+
+    def test_ignores_non_dict_output(self) -> None:
+        data = {"output": "not a dict", "title": "Test"}
+        assert _unwrap_llm_result(data) == data
+
+
 class TestSceneGenerator:
     def test_num_scenes_clamped(self) -> None:
         assert SceneGenerator(client=AsyncMock(), num_scenes=5).num_scenes == 10
@@ -45,6 +60,17 @@ class TestSceneGenerator:
         assert 10 <= len(result.scenes) <= 15
         assert result.title
         assert result.music_mood
+
+    async def test_generate_handles_wrapped_response(
+        self, sample_scenes_data: dict, sample_goals: ExtractedGoals,
+    ) -> None:
+        """Reproduces the real bug: Claude wraps tool output in {"output": {...}}."""
+        client = AsyncMock()
+        client.generate_structured = AsyncMock(return_value={"output": sample_scenes_data})
+        gen = SceneGenerator(client=client)
+        result = await gen.generate(sample_goals)
+        assert isinstance(result, MindMovieSpec)
+        assert 10 <= len(result.scenes) <= 15
 
     async def test_generate_raises_on_invalid_response(
         self, sample_goals: ExtractedGoals,
