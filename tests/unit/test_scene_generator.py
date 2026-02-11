@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 from pydantic import ValidationError
 
-from mindmovie.core.scene_generator import SceneGenerator
+from mindmovie.core.scene_generator import GENERATION_PROMPT, SceneGenerator
 from mindmovie.models.goals import ExtractedGoals
 from mindmovie.models.scenes import MindMovieSpec
 
@@ -54,6 +54,57 @@ class TestSceneGenerator:
         gen = SceneGenerator(client=client)
         with pytest.raises(ValidationError):
             await gen.generate(sample_goals)
+
+
+class TestBuildUserMessage:
+    def test_includes_appearance_when_present(
+        self, sample_goals: ExtractedGoals,
+    ) -> None:
+        gen = SceneGenerator(client=AsyncMock())
+        msg = gen._build_user_message(sample_goals)
+        assert "## Subject Appearance" in msg
+        assert sample_goals.appearance.description in msg  # type: ignore[union-attr]
+
+    def test_includes_initial_vision_when_present(
+        self, sample_goals: ExtractedGoals,
+    ) -> None:
+        gen = SceneGenerator(client=AsyncMock())
+        msg = gen._build_user_message(sample_goals)
+        assert "## Initial Vision Summary" in msg
+        assert sample_goals.initial_vision in msg  # type: ignore[operator]
+
+    def test_omits_appearance_when_absent(
+        self, sample_goals: ExtractedGoals,
+    ) -> None:
+        sample_goals.appearance = None
+        gen = SceneGenerator(client=AsyncMock())
+        msg = gen._build_user_message(sample_goals)
+        assert "## Subject Appearance" not in msg
+
+    def test_omits_initial_vision_when_absent(
+        self, sample_goals: ExtractedGoals,
+    ) -> None:
+        sample_goals.initial_vision = None
+        gen = SceneGenerator(client=AsyncMock())
+        msg = gen._build_user_message(sample_goals)
+        assert "## Initial Vision Summary" not in msg
+
+    def test_appearance_precedes_categories(
+        self, sample_goals: ExtractedGoals,
+    ) -> None:
+        gen = SceneGenerator(client=AsyncMock())
+        msg = gen._build_user_message(sample_goals)
+        appearance_pos = msg.index("## Subject Appearance")
+        first_category_pos = msg.index("## Health")
+        assert appearance_pos < first_category_pos
+
+
+class TestGenerationPrompt:
+    def test_prompt_mentions_subject_appearance(self) -> None:
+        assert "SUBJECT APPEARANCE" in GENERATION_PROMPT
+
+    def test_prompt_mentions_initial_vision(self) -> None:
+        assert "INITIAL VISION" in GENERATION_PROMPT
 
 
 class TestFixtureValidation:
