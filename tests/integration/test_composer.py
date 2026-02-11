@@ -64,8 +64,9 @@ class TestTextOverlay:
     def test_get_resolution(self) -> None:
         assert get_resolution("1080p", "16:9") == (1920, 1080)
         assert get_resolution("720p", "16:9") == (1280, 720)
+        assert get_resolution("480p", "16:9") == (854, 480)
         with pytest.raises(ValueError):
-            get_resolution("480p", "16:9")
+            get_resolution("360p", "16:9")
 
 
 class TestEffects:

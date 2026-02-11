@@ -273,6 +273,7 @@ def get_resolution(
         ValueError: If resolution is not recognized.
     """
     resolutions_16_9: dict[str, tuple[int, int]] = {
+        "480p": (854, 480),
         "720p": (1280, 720),
         "1080p": (1920, 1080),
         "4K": (3840, 2160),

@@ -4,18 +4,22 @@
 
 # Video generation settings
 video:
-  # Video generation model
-  # Options: veo-3.1-fast-generate-preview, veo-3.1-generate-preview,
-  #          veo-3.0-fast-generate-001, veo-3.0-generate-001
-  model: "veo-3.1-fast-generate-preview"
+  # Video generation provider: "byteplus" or "veo"
+  provider: "byteplus"
 
-  # Output resolution: 720p, 1080p, or 4K (4K only for Veo 3.1)
-  resolution: "1080p"
+  # Video generation model
+  # BytePlus: bytedance-seedance-1-5-pro
+  # Veo:      veo-3.1-fast-generate-preview, veo-3.1-generate-preview,
+  #           veo-3.0-fast-generate-001, veo-3.0-generate-001
+  model: "bytedance-seedance-1-5-pro"
+
+  # Output resolution: 480p, 720p, 1080p, or 4K
+  resolution: "720p"
 
   # Aspect ratio: 16:9 or 9:16
   aspect_ratio: "16:9"
 
-  # Generate audio with video (Veo 3+ only)
+  # Generate audio with video (BytePlus Seedance 1.5+ / Veo 3+)
   generate_audio: true
 
   # Maximum concurrent video generations (respects rate limits)

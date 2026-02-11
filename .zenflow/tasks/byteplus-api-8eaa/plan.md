@@ -25,7 +25,8 @@ Assessed difficulty as **medium**. Spec saved to `.zenflow/tasks/byteplus-api-8e
 
 ---
 
-### [ ] Step: Configuration & Settings
+### [x] Step: Configuration & Settings
+<!-- chat-id: 4b5ddff2-0f81-4a64-a77a-12e22cf6d7c2 -->
 <!-- depends-on: Technical Specification -->
 
 Update the settings layer to support provider selection and BytePlus API key.
@@ -39,8 +40,6 @@ Update the settings layer to support provider selection and BytePlus API key.
 7. Update `config.example.yaml` with `provider` field and BytePlus options
 8. Add `byteplus-python-sdk-v2` to `pyproject.toml` dependencies
 9. Add `byteplussdkarkruntime.*` to mypy `ignore_missing_imports` in `pyproject.toml`
-10. Run `ruff check src/` and `mypy src/` to verify
-11. Run `pytest tests/` to verify no existing tests break
 
 ---
 
