@@ -57,7 +57,7 @@ def settings(temp_build_dir: Path) -> Settings:
     s.api = APISettings.model_construct(
         anthropic_api_key=SecretStr("fake-anthropic-key"),
         gemini_api_key=SecretStr("fake-gemini-key"),
-        anthropic_model="claude-opus-4-20250514",
+        anthropic_model="claude-sonnet-4-20250514",
     )
     return s
 

@@ -64,7 +64,8 @@ Fix the primary crash: the `Scene.validate_affirmation_format()` validator in `s
 - Update unit tests in `tests/unit/test_models.py` for the new validation rules
 - Run `ruff check src/ tests/` and `pytest tests/ -v` to verify
 
-### [ ] Step: Fix hardcoded Anthropic model default and update .env.example
+### [x] Step: Fix hardcoded Anthropic model default and update .env.example
+<!-- chat-id: 6e95d3d0-f4d0-4ba0-a7b4-7cef7caec6ef -->
 
 Change the default model from Opus to Sonnet for cost-effectiveness.
 

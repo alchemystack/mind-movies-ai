@@ -23,7 +23,7 @@ _RETRYABLE_ERRORS = (
 )
 
 # Default model for all interactions
-DEFAULT_MODEL = "claude-opus-4-20250514"
+DEFAULT_MODEL = "claude-sonnet-4-20250514"
 
 
 class AnthropicClient:
