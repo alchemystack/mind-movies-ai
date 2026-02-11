@@ -72,7 +72,8 @@ Implement the data model changes and questionnaire prompt changes together, plus
    - Update system prompt assertion to check for appearance keywords
 6. Run `ruff check src/ tests/` and `mypy src/` and `pytest tests/unit/ -v`
 
-### [ ] Step: Update scene generation to use appearance data
+### [x] Step: Update scene generation to use appearance data
+<!-- chat-id: 03ae4ce4-677c-4273-8e15-8f3e57205ded -->
 
 Propagate appearance into scene generation prompts and update downstream tests/fixtures.
 

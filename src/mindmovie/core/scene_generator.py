@@ -46,6 +46,20 @@ SCENE DISTRIBUTION:
 - Order scenes to build emotional momentum: start energetic, \
 build through confident/joyful, end serene/grateful
 
+SUBJECT APPEARANCE:
+- If physical appearance is provided, use it consistently in ALL video prompts
+- Replace generic "person" with appearance-matching descriptions
+- Example: Instead of "A vibrant person in athletic wear", use
+  "A tall woman with warm brown skin and curly dark hair in athletic wear"
+- Keep descriptions natural and cinematic — weave appearance into the scene
+  rather than listing traits mechanically
+- If no appearance is provided, use generic inclusive descriptions
+
+INITIAL VISION:
+- If an initial vision summary is provided, use it as additional context
+  to inform the tone, themes, and imagery of the scenes
+- The vision should complement (not override) the per-category goals
+
 MUSIC MOOD:
 - Describe an overall music mood that complements all scenes
 - Example: "uplifting ambient with gentle piano and warm synthesizer pads"
@@ -135,6 +149,16 @@ class SceneGenerator:
         parts.append(f"Title: {goals.title}")
         parts.append(f"Target number of scenes: {self.num_scenes}")
         parts.append("")
+
+        if goals.appearance:
+            parts.append("## Subject Appearance")
+            parts.append(goals.appearance.description)
+            parts.append("")
+
+        if goals.initial_vision:
+            parts.append("## Initial Vision Summary")
+            parts.append(goals.initial_vision)
+            parts.append("")
 
         for cat_goal in goals.categories:
             status = "SKIPPED" if cat_goal.skipped else "ACTIVE"
