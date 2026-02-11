@@ -34,7 +34,7 @@ Update the settings layer to support provider selection and BytePlus API key.
 1. Add `byteplus_api_key: SecretStr` to `APISettings` in `src/mindmovie/config/settings.py`
 2. Add `provider: Literal["veo", "byteplus"]` field (default `"byteplus"`) and `generate_audio: bool` (default `True`) to `VideoSettings`
 3. Add `"480p"` to the `resolution` Literal (BytePlus supports it)
-4. Update defaults: `model` to `"bytedance-seedance-1-5-pro"`, `resolution` to `"720p"`
+4. Update defaults: `model` to `"seedance-1-5-pro-251215"`, `resolution` to `"720p"`
 5. Make `has_required_api_keys()` and `get_missing_api_keys()` provider-aware
 6. Add `BYTEPLUS_API_KEY` to `.env.example`
 7. Update `config.example.yaml` with `provider` field and BytePlus options
@@ -43,7 +43,7 @@ Update the settings layer to support provider selection and BytePlus API key.
 
 ---
 
-### [ ] Step: BytePlusClient Implementation
+### [x] Step: BytePlusClient Implementation
 <!-- depends-on: Configuration & Settings -->
 
 Create the BytePlus video generation client with tests.
@@ -82,7 +82,7 @@ Wire up provider selection via factory function, update pipeline and CLI.
    - Replace hardcoded VeoClient instantiation (lines 121-127) with `create_video_client()`
    - Replace `validate_api_keys_for_command(settings, require_gemini=True)` with provider-aware validation
 5. Update `src/mindmovie/core/cost_estimator.py`:
-   - Add `"bytedance-seedance-1-5-pro": 0.026` to `VIDEO_PRICING`
+   - Add `"seedance-1-5-pro-251215": 0.026` to `VIDEO_PRICING`
 6. Update `src/mindmovie/cli/ui/setup.py`:
    - Add `require_byteplus` param to `validate_api_keys_for_command`
    - Add `BYTEPLUS_API_KEY` entry to `_KEY_HELP` dict

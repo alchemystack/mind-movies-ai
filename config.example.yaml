@@ -8,10 +8,10 @@ video:
   provider: "byteplus"
 
   # Video generation model
-  # BytePlus: bytedance-seedance-1-5-pro
+  # BytePlus: seedance-1-5-pro-251215
   # Veo:      veo-3.1-fast-generate-preview, veo-3.1-generate-preview,
   #           veo-3.0-fast-generate-001, veo-3.0-generate-001
-  model: "bytedance-seedance-1-5-pro"
+  model: "seedance-1-5-pro-251215"
 
   # Output resolution: 480p, 720p, 1080p, or 4K
   resolution: "720p"

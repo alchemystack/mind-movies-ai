@@ -46,7 +46,7 @@ class VideoSettings(BaseSettings):
         description="Video generation provider: veo or byteplus",
     )
     model: str = Field(
-        default="bytedance-seedance-1-5-pro",
+        default="seedance-1-5-pro-251215",
         description="Video generation model ID",
     )
     resolution: Literal["480p", "720p", "1080p", "4K"] = Field(

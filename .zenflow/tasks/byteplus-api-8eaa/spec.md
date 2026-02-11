@@ -36,7 +36,7 @@ The BytePlus ModelArk Video Generation API is task-based and asynchronous:
 
 | Setting | Value |
 |---------|-------|
-| Model ID | `bytedance-seedance-1-5-pro` |
+| Model ID | `seedance-1-5-pro-251215` |
 | Resolution | `720p` |
 | Aspect Ratio | `16:9` |
 | Audio | Enabled (with audio) |
@@ -54,7 +54,7 @@ BytePlus uses token-based pricing: `Tokens = (Width * Height * FPS * Duration) /
 At 720p (1280x720), 24fps, 5s with audio (offline): ~$0.13/clip. With 12 scenes: ~$1.56 total.
 
 For cost estimation, we'll use a per-second approximation since the pipeline thinks in seconds:
-- `bytedance-seedance-1-5-pro` with audio at 720p: ~$0.026/s (derived from token formula)
+- `seedance-1-5-pro-251215` with audio at 720p: ~$0.026/s (derived from token formula)
 
 ---
 
@@ -129,7 +129,7 @@ class VideoSettings(BaseSettings):
         description="Video generation provider",
     )
     model: str = Field(
-        default="bytedance-seedance-1-5-pro",
+        default="seedance-1-5-pro-251215",
         description="Video generation model ID",
     )
     resolution: Literal["480p", "720p", "1080p", "4K"] = Field(
@@ -173,7 +173,7 @@ class BytePlusClient:
     def __init__(
         self,
         api_key: str,
-        model: str = "bytedance-seedance-1-5-pro",
+        model: str = "seedance-1-5-pro-251215",
         poll_interval: int = 10,
         generate_audio: bool = True,
     ) -> None:
@@ -285,7 +285,7 @@ VIDEO_PRICING: dict[str, float] = {
     "veo-3.0-fast-generate-001": 0.15,
     "veo-2.0-generate-001": 0.35,
     # BytePlus Seedance (per second, derived from token pricing at 720p/24fps)
-    "bytedance-seedance-1-5-pro": 0.026,
+    "seedance-1-5-pro-251215": 0.026,
 }
 ```
 
@@ -340,4 +340,4 @@ The existing protocol signature works as-is. BytePlus `duration` is actually con
 | Exact prompt parameter format may differ | Build prompt helper as isolated method, easy to adjust. Log full prompt at DEBUG level. |
 | Video download from URL may need auth headers | Start with simple `urllib.request.urlretrieve`; if it fails, switch to `requests` with bearer token |
 | Cost estimation is approximate | Use token formula for accuracy; document that it's an estimate |
-| Model ID format uncertainty | User confirmed `bytedance-seedance-1-5-pro`; can be overridden via config |
+| Model ID format uncertainty | User confirmed `seedance-1-5-pro-251215`; can be overridden via config |
