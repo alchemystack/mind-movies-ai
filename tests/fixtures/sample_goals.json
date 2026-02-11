@@ -1,6 +1,10 @@
 {
   "title": "My Dream Life",
   "conversation_id": "test-conversation-001",
+  "appearance": {
+    "description": "Tall athletic man with light skin, short brown hair, and blue eyes"
+  },
+  "initial_vision": "I want to live a life full of adventure, health, and meaningful connections.",
   "categories": [
     {
       "category": "health",
