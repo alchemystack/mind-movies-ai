@@ -57,6 +57,7 @@ def settings(temp_build_dir: Path) -> Settings:
     s.api = APISettings.model_construct(
         anthropic_api_key=SecretStr("fake-anthropic-key"),
         gemini_api_key=SecretStr("fake-gemini-key"),
+        byteplus_api_key=SecretStr("fake-byteplus-key"),
         anthropic_model="claude-sonnet-4-20250514",
     )
     return s
@@ -110,7 +111,10 @@ class TestFullPipeline:
 
         with (
             patch("mindmovie.core.pipeline.AnthropicClient", return_value=mock_client),
-            patch("mindmovie.core.pipeline.VeoClient", return_value=mock_video_client),
+            patch(
+                "mindmovie.core.pipeline.create_video_client",
+                return_value=mock_video_client,
+            ),
             patch("mindmovie.core.pipeline.VideoComposer") as mock_composer_cls,
         ):
             mock_composer = MagicMock()
@@ -212,7 +216,10 @@ class TestResumeCapability:
 
         with (
             patch("mindmovie.core.pipeline.AnthropicClient", return_value=mock_client),
-            patch("mindmovie.core.pipeline.VeoClient", return_value=mock_video_client),
+            patch(
+                "mindmovie.core.pipeline.create_video_client",
+                return_value=mock_video_client,
+            ),
             patch("mindmovie.core.pipeline.VideoComposer") as mock_composer_cls,
         ):
             mock_composer = MagicMock()
@@ -246,7 +253,10 @@ class TestResumeCapability:
         output_path = state_manager.build_dir / "resumed_video.mp4"
 
         with (
-            patch("mindmovie.core.pipeline.VeoClient", return_value=mock_video_client),
+            patch(
+                "mindmovie.core.pipeline.create_video_client",
+                return_value=mock_video_client,
+            ),
             patch("mindmovie.core.pipeline.VideoComposer") as mock_composer_cls,
         ):
             mock_composer = MagicMock()
@@ -342,17 +352,19 @@ class TestErrorHandling:
         with pytest.raises(PipelineError, match="ANTHROPIC_API_KEY"):
             await orchestrator.run()
 
-    async def test_missing_gemini_key_raises(
+    async def test_missing_video_provider_key_raises(
         self,
         state_manager: StateManager,
         settings: Settings,
         sample_spec: MindMovieSpec,
     ) -> None:
-        """Pipeline raises PipelineError when GEMINI_API_KEY is empty at video stage."""
+        """Pipeline raises PipelineError when the video provider API key is empty."""
         state_manager.complete_scene_generation(sample_spec)
 
-        # Override gemini key to empty
+        # Test with veo provider and empty gemini key
         from pydantic import SecretStr
+
+        settings.video = settings.video.model_copy(update={"provider": "veo"})
         settings.api.gemini_api_key = SecretStr("")
 
         orchestrator = PipelineOrchestrator(
@@ -361,6 +373,28 @@ class TestErrorHandling:
         )
 
         with pytest.raises(PipelineError, match="GEMINI_API_KEY"):
+            await orchestrator.run()
+
+    async def test_missing_byteplus_key_raises(
+        self,
+        state_manager: StateManager,
+        settings: Settings,
+        sample_spec: MindMovieSpec,
+    ) -> None:
+        """Pipeline raises PipelineError when BYTEPLUS_API_KEY is empty."""
+        state_manager.complete_scene_generation(sample_spec)
+
+        from pydantic import SecretStr
+
+        settings.video = settings.video.model_copy(update={"provider": "byteplus"})
+        settings.api.byteplus_api_key = SecretStr("")
+
+        orchestrator = PipelineOrchestrator(
+            settings=settings,
+            state_manager=state_manager,
+        )
+
+        with pytest.raises(PipelineError, match="BYTEPLUS_API_KEY"):
             await orchestrator.run()
 
     async def test_video_generation_failure_raises(
@@ -388,7 +422,10 @@ class TestErrorHandling:
         mock_video_client.generate_video = AsyncMock(side_effect=_fail_first)
         mock_video_client.estimate_cost = MagicMock(return_value=0.80)
 
-        with patch("mindmovie.core.pipeline.VeoClient", return_value=mock_video_client):
+        with patch(
+            "mindmovie.core.pipeline.create_video_client",
+            return_value=mock_video_client,
+        ):
             orchestrator = PipelineOrchestrator(
                 settings=settings,
                 state_manager=state_manager,

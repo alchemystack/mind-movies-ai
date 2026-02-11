@@ -48,7 +48,7 @@ class TestConfigCheck:
                 "os.environ",
                 {
                     "ANTHROPIC_API_KEY": "sk-ant-test",
-                    "GEMINI_API_KEY": "gk-test",
+                    "BYTEPLUS_API_KEY": "bp-test",
                 },
             ),
         ):
@@ -66,7 +66,7 @@ class TestConfigCheck:
                 "os.environ",
                 {
                     "ANTHROPIC_API_KEY": "sk-ant-test",
-                    "GEMINI_API_KEY": "gk-test",
+                    "BYTEPLUS_API_KEY": "bp-test",
                 },
             ),
         ):
@@ -189,7 +189,7 @@ class TestGenerateErrorHandling:
                 "os.environ",
                 {
                     "ANTHROPIC_API_KEY": "sk-ant-test",
-                    "GEMINI_API_KEY": "gk-test",
+                    "BYTEPLUS_API_KEY": "bp-test",
                 },
             ),
         ):

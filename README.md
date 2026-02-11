@@ -7,13 +7,13 @@ AI-powered CLI pipeline that generates personalized 3-minute visualization video
 The pipeline runs in 4 stages, each checkpointed to disk so you can resume if anything fails:
 
 ```
-Questionnaire  ->  Scene Generation  ->  Video Generation  ->  Composition
-(Claude chat)     (Claude structured)    (Google Veo)         (MoviePy/FFmpeg)
+Questionnaire  ->  Scene Generation  ->  Video Generation       ->  Composition
+(Claude chat)     (Claude structured)    (BytePlus or Google Veo)   (MoviePy/FFmpeg)
 ```
 
 1. **Questionnaire** -- An interactive Claude-powered conversation extracts your life goals across categories
 2. **Scene Generation** -- Goals are transformed into visual scene descriptions with affirmations via structured output
-3. **Video Generation** -- Each scene is sent to Google Veo to generate video clips (with concurrent generation)
+3. **Video Generation** -- Each scene is sent to the configured video provider (BytePlus Seedance by default, Google Veo as alternative) to generate video clips with native audio (concurrent generation)
 4. **Composition** -- Clips are assembled into a final MP4 with text overlays, crossfades, and optional background music
 
 ## Prerequisites
@@ -22,7 +22,8 @@ Questionnaire  ->  Scene Generation  ->  Video Generation  ->  Composition
 - **FFmpeg** installed and available on your PATH
 - **API Keys**:
   - [Anthropic API key](https://console.anthropic.com/) -- for questionnaire and scene generation (Claude)
-  - [Google Gemini API key](https://aistudio.google.com/apikey) -- for video generation (Veo)
+  - [BytePlus API key](https://console.byteplus.com/) -- for video generation with Seedance (default provider)
+  - [Google Gemini API key](https://aistudio.google.com/apikey) -- for video generation with Veo (alternative provider)
 
 ## Installation
 
@@ -36,7 +37,7 @@ pip install -e ".[dev]"
 
 # Set up your API keys
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY and GEMINI_API_KEY
+# Edit .env and add your ANTHROPIC_API_KEY and BYTEPLUS_API_KEY (or GEMINI_API_KEY for Veo)
 ```
 
 ## Usage
@@ -64,8 +65,10 @@ Key configuration options:
 
 | Section | Setting | Default | Description |
 |---------|---------|---------|-------------|
-| `video` | `model` | `veo-3.1-fast-generate-preview` | Veo model variant |
-| `video` | `resolution` | `1080p` | Output resolution (720p / 1080p / 4K) |
+| `video` | `provider` | `byteplus` | Video provider: `byteplus` or `veo` |
+| `video` | `model` | `seedance-1-5-pro-251215` | Video generation model ID |
+| `video` | `resolution` | `720p` | Output resolution (480p / 720p / 1080p / 4K) |
+| `video` | `generate_audio` | `true` | Generate native audio (BytePlus Seedance only) |
 | `video` | `max_concurrent` | `5` | Parallel video generation limit |
 | `movie` | `num_scenes` | `12` | Target number of scenes |
 | `movie` | `scene_duration` | `8` | Duration per scene (seconds) |
@@ -77,7 +80,7 @@ Key configuration options:
 
 ```
 src/mindmovie/
-  api/              # External API clients (Anthropic, Veo)
+  api/              # External API clients (Anthropic, BytePlus, Veo) + factory
   assets/           # Asset generation orchestration
   cli/              # Typer CLI application and commands
   config/           # Pydantic Settings + YAML config loading
@@ -96,7 +99,7 @@ ruff check src/ tests/
 # Type checking (strict mode)
 mypy src/
 
-# Run all tests (116 tests, all API calls mocked)
+# Run all tests (158 tests, all API calls mocked)
 pytest tests/ -v
 
 # Run subsets
@@ -107,10 +110,11 @@ pytest tests/integration/ -v
 ## Architecture Notes
 
 - **Protocol-based abstractions** -- `VideoGeneratorProtocol` and `LLMClientProtocol` enable swappable backends
+- **Multi-provider video generation** -- Factory pattern (`api/factory.py`) supports BytePlus Seedance and Google Veo; new providers can be added by implementing `VideoGeneratorProtocol` and adding a branch in the factory
 - **State checkpointing** -- Each pipeline stage is atomic; crash at any point and resume from the last checkpoint
 - **Retry with backoff** -- All API clients use tenacity for exponential backoff on transient errors
 - **Text rendering via Pillow** -- Avoids the ImageMagick system dependency that MoviePy's `TextClip` requires
-- **Async video generation** -- Veo's synchronous SDK is wrapped in `asyncio.to_thread()` for concurrency
+- **Async video generation** -- Both providers' synchronous SDKs are wrapped in `asyncio.to_thread()` for concurrency
 
 ## License
 

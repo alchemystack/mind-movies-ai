@@ -91,7 +91,8 @@ class TestMindMovieSpec:
 
     def test_total_duration(self) -> None:
         spec = self._make_spec(12)
-        assert spec.total_duration() == 5 + 96 + 5
+        # 5s title + 12 scenes × 12s default + 5s closing = 154s
+        assert spec.total_duration() == 5 + (12 * 12) + 5
 
     def test_min_max_scenes_validation(self) -> None:
         with pytest.raises(ValueError):

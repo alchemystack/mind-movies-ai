@@ -26,6 +26,7 @@ dependencies = [
     "anthropic>=0.40.0",
     "google-genai>=1.0.0",
     "moviepy>=2.2.0",
+    "byteplus-python-sdk-v2>=0.1.0",
     "tenacity>=8.0.0",
     "pyyaml>=6.0.0",
     "python-dotenv>=1.0.0",
@@ -96,6 +97,7 @@ plugins = ["pydantic.mypy"]
 module = [
     "moviepy.*",
     "google.genai.*",
+    "byteplussdkarkruntime.*",
 ]
 ignore_missing_imports = true
 

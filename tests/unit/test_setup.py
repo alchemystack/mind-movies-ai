@@ -13,13 +13,14 @@ from mindmovie.config.settings import APISettings, Settings
 
 
 def _settings_with_keys(
-    anthropic: str = "", gemini: str = ""
+    anthropic: str = "", gemini: str = "", byteplus: str = ""
 ) -> Settings:
     """Create settings with the given API keys."""
     s = Settings()
     s.api = APISettings.model_construct(
         anthropic_api_key=SecretStr(anthropic),
         gemini_api_key=SecretStr(gemini),
+        byteplus_api_key=SecretStr(byteplus),
     )
     return s
 
@@ -66,6 +67,34 @@ class TestValidateApiKeysForCommand:
             settings, require_anthropic=True, require_gemini=True
         )
 
+    def test_byteplus_present(self) -> None:
+        settings = _settings_with_keys(byteplus="bp-test")
+        assert validate_api_keys_for_command(settings, require_byteplus=True)
+
+    def test_byteplus_missing(self) -> None:
+        settings = _settings_with_keys()
+        assert not validate_api_keys_for_command(settings, require_byteplus=True)
+
+    def test_video_provider_byteplus_present(self) -> None:
+        settings = _settings_with_keys(byteplus="bp-test")
+        settings.video = settings.video.model_copy(update={"provider": "byteplus"})
+        assert validate_api_keys_for_command(settings, require_video_provider=True)
+
+    def test_video_provider_byteplus_missing(self) -> None:
+        settings = _settings_with_keys()
+        settings.video = settings.video.model_copy(update={"provider": "byteplus"})
+        assert not validate_api_keys_for_command(settings, require_video_provider=True)
+
+    def test_video_provider_veo_present(self) -> None:
+        settings = _settings_with_keys(gemini="gk-test")
+        settings.video = settings.video.model_copy(update={"provider": "veo"})
+        assert validate_api_keys_for_command(settings, require_video_provider=True)
+
+    def test_video_provider_veo_missing(self) -> None:
+        settings = _settings_with_keys()
+        settings.video = settings.video.model_copy(update={"provider": "veo"})
+        assert not validate_api_keys_for_command(settings, require_video_provider=True)
+
     def test_none_required(self) -> None:
         settings = _settings_with_keys()
         assert validate_api_keys_for_command(settings)
@@ -73,7 +102,7 @@ class TestValidateApiKeysForCommand:
 
 class TestRunSetupCheck:
     def test_all_present(self) -> None:
-        settings = _settings_with_keys(anthropic="sk-ant-test", gemini="gk-test")
+        settings = _settings_with_keys(anthropic="sk-ant-test", byteplus="bp-test")
         with patch(
             "mindmovie.cli.ui.setup.check_system_dependencies", return_value=[]
         ):
@@ -87,7 +116,7 @@ class TestRunSetupCheck:
             assert not run_setup_check(settings)
 
     def test_missing_system_deps(self) -> None:
-        settings = _settings_with_keys(anthropic="sk-ant-test", gemini="gk-test")
+        settings = _settings_with_keys(anthropic="sk-ant-test", byteplus="bp-test")
         with patch(
             "mindmovie.cli.ui.setup.check_system_dependencies",
             return_value=["ffmpeg"],

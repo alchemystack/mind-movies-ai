@@ -37,7 +37,7 @@ def render(
 
     Reads the scene specification produced by the questionnaire and scene
     generation stages, then generates a video clip for each scene using the
-    configured video provider (default: Google Veo 3.1 Fast).
+    configured video provider (default: BytePlus Seedance 1.5 Pro).
 
     Videos are generated in parallel (up to --max-concurrent) with automatic
     retry on transient failures. Progress is saved after each clip, so you
@@ -103,6 +103,7 @@ def render(
 
     print_header("Video Generation")
     print_info(f"Generating {pending_count} of {total_count} scene videos")
+    print_info(f"Provider: {settings.video.provider}")
     print_info(f"Model: {settings.video.model}")
     print_info(f"Resolution: {settings.video.resolution}")
     print_info(f"Max concurrent: {settings.video.max_concurrent}")
@@ -115,16 +116,13 @@ def render(
         return
 
     # --- Validate API key (after showing cost so user sees what they'd pay) ---
-    if not validate_api_keys_for_command(settings, require_gemini=True):
+    if not validate_api_keys_for_command(settings, require_video_provider=True):
         raise typer.Exit(code=1)
 
     # --- Create video client ---
-    from mindmovie.api import VeoClient
+    from mindmovie.api.factory import create_video_client
 
-    video_client = VeoClient(
-        api_key=settings.api.gemini_api_key.get_secret_value(),
-        model=settings.video.model,
-    )
+    video_client = create_video_client(settings)
 
     # --- Create orchestrator ---
     asset_generator = AssetGenerator(

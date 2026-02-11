@@ -24,6 +24,11 @@ class APISettings(BaseSettings):
         validation_alias="GEMINI_API_KEY",
         description="Google Gemini/Veo API key (video generation)",
     )
+    byteplus_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias="BYTEPLUS_API_KEY",
+        description="BytePlus API key for Seedance video generation",
+    )
     anthropic_model: str = Field(
         default="claude-sonnet-4-20250514",
         validation_alias="ANTHROPIC_MODEL",
@@ -36,17 +41,25 @@ class VideoSettings(BaseSettings):
 
     model_config = SettingsConfigDict(extra="ignore")
 
+    provider: Literal["veo", "byteplus"] = Field(
+        default="byteplus",
+        description="Video generation provider: veo or byteplus",
+    )
     model: str = Field(
-        default="veo-3.1-fast-generate-preview",
+        default="seedance-1-5-pro-251215",
         description="Video generation model ID",
     )
-    resolution: Literal["720p", "1080p", "4K"] = Field(
-        default="1080p",
-        description="Output resolution: 720p, 1080p, or 4K",
+    resolution: Literal["480p", "720p", "1080p", "4K"] = Field(
+        default="720p",
+        description="Output resolution: 480p, 720p, 1080p, or 4K",
     )
     aspect_ratio: Literal["16:9", "9:16"] = Field(
         default="16:9",
         description="Aspect ratio: 16:9 or 9:16",
+    )
+    generate_audio: bool = Field(
+        default=True,
+        description="Generate audio with video (BytePlus Seedance 1.5+ only)",
     )
     max_concurrent: int = Field(
         default=5,
@@ -89,13 +102,13 @@ class MovieSettings(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
 
     scene_duration: int = Field(
-        default=8,
+        default=12,
         ge=5,
         le=15,
         description="Duration of each scene in seconds",
     )
     num_scenes: int = Field(
-        default=12,
+        default=10,
         ge=10,
         le=15,
         description="Target number of scenes (10-15 recommended)",
@@ -167,17 +180,24 @@ class Settings(BaseSettings):
         return self.build.output_path
 
     def has_required_api_keys(self) -> bool:
-        """Check if required API keys are configured."""
-        return bool(
-            self.api.anthropic_api_key.get_secret_value()
-            and self.api.gemini_api_key.get_secret_value()
-        )
+        """Check if required API keys are configured for the selected provider."""
+        has_anthropic = bool(self.api.anthropic_api_key.get_secret_value())
+        if self.video.provider == "veo":
+            return has_anthropic and bool(self.api.gemini_api_key.get_secret_value())
+        elif self.video.provider == "byteplus":
+            return has_anthropic and bool(self.api.byteplus_api_key.get_secret_value())
+        return has_anthropic
 
     def get_missing_api_keys(self) -> list[str]:
-        """Return list of missing required API keys."""
+        """Return list of missing required API keys for current provider."""
         missing = []
         if not self.api.anthropic_api_key.get_secret_value():
             missing.append("ANTHROPIC_API_KEY")
-        if not self.api.gemini_api_key.get_secret_value():
+        if self.video.provider == "veo" and not self.api.gemini_api_key.get_secret_value():
             missing.append("GEMINI_API_KEY")
+        if (
+            self.video.provider == "byteplus"
+            and not self.api.byteplus_api_key.get_secret_value()
+        ):
+            missing.append("BYTEPLUS_API_KEY")
         return missing

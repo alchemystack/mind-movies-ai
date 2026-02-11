@@ -49,6 +49,8 @@ def config(
     api_data["ANTHROPIC_API_KEY"] = _mask_key(anthropic) if anthropic else "[red]not set[/red]"
     gemini = settings.api.gemini_api_key.get_secret_value()
     api_data["GEMINI_API_KEY"] = _mask_key(gemini) if gemini else "[red]not set[/red]"
+    byteplus = settings.api.byteplus_api_key.get_secret_value()
+    api_data["BYTEPLUS_API_KEY"] = _mask_key(byteplus) if byteplus else "[red]not set[/red]"
     print_key_value_table("API Keys", api_data)
     console.print()
 
@@ -56,9 +58,11 @@ def config(
     print_key_value_table(
         "Video Generation",
         {
+            "Provider": settings.video.provider,
             "Model": settings.video.model,
             "Resolution": settings.video.resolution,
             "Aspect Ratio": settings.video.aspect_ratio,
+            "Generate Audio": str(settings.video.generate_audio),
             "Max Concurrent": str(settings.video.max_concurrent),
             "Max Retries": str(settings.video.max_retries),
         },

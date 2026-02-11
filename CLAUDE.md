@@ -20,7 +20,7 @@ mindmovie clean             # Clear build directory
 # Quality checks
 ruff check src/ tests/      # Linting
 mypy src/                   # Type checking (strict mode)
-pytest tests/ -v            # All tests (116 tests)
+pytest tests/ -v            # All tests (158 tests)
 pytest tests/unit/ -v       # Unit tests only
 pytest tests/integration/ -v  # Integration tests only
 ```
@@ -31,25 +31,32 @@ pytest tests/integration/ -v  # Integration tests only
 - FFmpeg (system dependency, required for video composition)
 - API keys in `.env` (copy from `.env.example`):
   - `ANTHROPIC_API_KEY` — Claude API for questionnaire and scene generation
-  - `GEMINI_API_KEY` — Google Veo API for video generation
+  - `BYTEPLUS_API_KEY` — BytePlus Seedance API for video generation (default provider)
+  - `GEMINI_API_KEY` — Google Veo API for video generation (alternative provider)
 
 ## Architecture
 
 The pipeline has 4 stages, each checkpointed to disk for resume capability:
 
 ```
-Questionnaire -> Scene Generation -> Video Generation -> Composition
-(Claude chat)    (Claude structured)  (Google Veo)       (MoviePy/FFmpeg)
+Questionnaire -> Scene Generation -> Video Generation     -> Composition
+(Claude chat)    (Claude structured)  (BytePlus or Veo)     (MoviePy/FFmpeg)
 ```
+
+Video generation supports multiple providers via factory pattern (`api/factory.py`).
+Default provider is **BytePlus Seedance 1.5 Pro** (`provider: byteplus`). Google Veo is
+retained as an alternative (`provider: veo`). Set in `config.yaml` or `VideoSettings`.
 
 ### Package structure
 
 ```
 src/mindmovie/
-  api/              # External API clients (Anthropic, Veo)
+  api/              # External API clients (Anthropic, BytePlus, Veo)
     base.py         #   Protocol definitions (VideoGeneratorProtocol, LLMClientProtocol)
     anthropic_client.py  # Claude chat + structured output with retry
+    byteplus_client.py   # BytePlus Seedance video generation with polling + retry
     veo_client.py   #   Veo video generation with polling + retry
+    factory.py      #   create_video_client() — provider selection factory
   assets/           # Asset generation orchestration
     generator.py    #   Parallel video generation with semaphore concurrency
     video_generator.py  # Per-scene video generation wrapper
@@ -80,10 +87,11 @@ src/mindmovie/
 ### Key patterns
 
 - **Protocol-based abstractions**: `VideoGeneratorProtocol` and `LLMClientProtocol` in `api/base.py` enable swappable backends
+- **Factory-based provider selection**: `create_video_client()` in `api/factory.py` reads `settings.video.provider` and returns the correct client. Uses lazy imports so only the active provider's SDK needs to be installed
 - **State checkpointing**: `StateManager` persists `PipelineState` as JSON in `build/`. Each pipeline stage is atomic — crash at any point resumes from last checkpoint
 - **Retry with tenacity**: All API clients use exponential backoff for transient errors
 - **Text rendering via Pillow**: `text_overlay.py` renders text to PIL Images, avoiding the ImageMagick system dependency that MoviePy's `TextClip` requires
-- **Async video generation**: Veo's synchronous SDK is wrapped in `asyncio.to_thread()` for concurrent scene generation
+- **Async video generation**: Both BytePlus and Veo synchronous SDKs are wrapped in `asyncio.to_thread()` for concurrent scene generation
 
 ### Configuration hierarchy
 
@@ -98,5 +106,5 @@ Tests are organized as unit (mocked) and integration (CLI + component interactio
 ## Tool Configuration
 
 - **ruff**: Line length 100, Python 3.11 target, select rules: E/W/F/I/B/C4/UP/ARG/SIM
-- **mypy**: Strict mode with pydantic plugin; `moviepy.*` and `google.genai.*` have `ignore_missing_imports`
+- **mypy**: Strict mode with pydantic plugin; `moviepy.*`, `google.genai.*`, and `byteplussdkarkruntime.*` have `ignore_missing_imports`
 - **pytest**: asyncio_mode=auto, markers for `slow` and `integration`
