@@ -1,0 +1,157 @@
+{
+  "chat_response": {
+    "id": "msg_test_001",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-sonnet-4-5-20250514",
+    "content": [
+      {
+        "type": "text",
+        "text": "Welcome! I'm excited to help you create your mind movie. Let's explore your vision across six life areas: Health, Wealth, Career, Relationships, Personal Growth, and Lifestyle.\n\nLet's start with **Health**. What does your ideal healthy life look like?"
+      }
+    ],
+    "stop_reason": "end_turn",
+    "usage": {
+      "input_tokens": 450,
+      "output_tokens": 62
+    }
+  },
+  "chat_response_empty": {
+    "id": "msg_test_002",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-sonnet-4-5-20250514",
+    "content": [],
+    "stop_reason": "end_turn",
+    "usage": {
+      "input_tokens": 100,
+      "output_tokens": 0
+    }
+  },
+  "structured_response": {
+    "id": "msg_test_003",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-sonnet-4-5-20250514",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_test_001",
+        "name": "structured_output",
+        "input": {
+          "title": "My Beautiful Life Vision",
+          "scenes": [
+            {
+              "index": 0,
+              "category": "health",
+              "affirmation": "I am radiantly healthy and full of energy",
+              "video_prompt": "A vibrant person in athletic wear runs along a beautiful coastal trail at sunrise. The ocean sparkles to their left, waves crashing gently. They move with effortless strength. Tracking shot following from the side. Warm morning light, cinematic, saturated colors.",
+              "mood": "energetic"
+            },
+            {
+              "index": 1,
+              "category": "health",
+              "affirmation": "I am strong and vibrant every single day",
+              "video_prompt": "Person doing yoga on a sunlit wooden deck overlooking misty mountains at dawn. Slow graceful movements. Wide establishing shot pulling back to reveal the vast mountain landscape. Soft golden light, peaceful atmosphere, cinematic quality.",
+              "mood": "peaceful"
+            },
+            {
+              "index": 2,
+              "category": "wealth",
+              "affirmation": "I am financially free and abundantly prosperous",
+              "video_prompt": "A confident person in elegant clothing walks through a sunlit modern penthouse with floor-to-ceiling windows overlooking a city skyline. They smile and turn toward the panoramic view. Slow dolly forward. Warm golden hour light, cinematic color grading, shallow depth of field.",
+              "mood": "confident"
+            },
+            {
+              "index": 3,
+              "category": "wealth",
+              "affirmation": "I have multiple streams of abundant income",
+              "video_prompt": "Person sitting at a beautiful mahogany desk in a modern home office with large windows. Sunlight streams in as they review documents with a satisfied smile. Slow push-in camera movement. Warm, professional lighting, aspirational luxury aesthetic.",
+              "mood": "warm"
+            },
+            {
+              "index": 4,
+              "category": "career",
+              "affirmation": "I am passionate about my meaningful work",
+              "video_prompt": "Person presenting confidently to an engaged audience in a modern conference room. Dynamic hand gestures, warm smiles exchanged. Medium close-up with shallow depth of field. Bright professional lighting, contemporary aesthetic.",
+              "mood": "confident"
+            },
+            {
+              "index": 5,
+              "category": "career",
+              "affirmation": "I am a respected leader making a difference",
+              "video_prompt": "A leader walking through a creative open-plan office, greeting team members warmly. People smile and engage enthusiastically. Smooth tracking shot. Bright natural light from large windows, modern creative workspace, uplifting energy.",
+              "mood": "joyful"
+            },
+            {
+              "index": 6,
+              "category": "relationships",
+              "affirmation": "I am surrounded by loving supportive people",
+              "video_prompt": "Close-up of friends laughing together at an outdoor dinner table with candles and string lights at dusk. Warm embraces and genuine joy. Gentle push-in camera. Romantic warm color palette, golden hour, shallow depth of field.",
+              "mood": "romantic"
+            },
+            {
+              "index": 7,
+              "category": "relationships",
+              "affirmation": "I have deep meaningful connections with others",
+              "video_prompt": "Two people walking hand in hand along a sunset beach, waves gently lapping at their feet. They turn to each other and smile. Slow motion, wide shot. Golden hour light, cinematic warmth, peaceful ocean backdrop.",
+              "mood": "romantic"
+            },
+            {
+              "index": 8,
+              "category": "growth",
+              "affirmation": "I am constantly growing and evolving beautifully",
+              "video_prompt": "Person sitting in a cozy reading nook by a large window, rain outside, absorbed in a book with a content expression. Warm cup of tea nearby. Slow dolly in. Soft natural light, intimate atmosphere, warm tones, cinematic grain.",
+              "mood": "serene"
+            },
+            {
+              "index": 9,
+              "category": "growth",
+              "affirmation": "I am becoming the best version of myself",
+              "video_prompt": "Person meditating peacefully in a beautiful garden at sunrise, surrounded by blooming flowers and gentle morning mist. Birds flying overhead. Slow crane shot rising upward. Ethereal golden light, dreamlike quality, aspirational serenity.",
+              "mood": "peaceful"
+            },
+            {
+              "index": 10,
+              "category": "lifestyle",
+              "affirmation": "I am living my dream life with total freedom",
+              "video_prompt": "Person standing on the balcony of a beautiful villa overlooking turquoise Mediterranean waters. They spread their arms wide, embracing the view. Slow aerial pullback revealing the stunning coastline. Brilliant sunshine, vivid colors, cinematic grandeur.",
+              "mood": "joyful"
+            },
+            {
+              "index": 11,
+              "category": "lifestyle",
+              "affirmation": "I am grateful for my beautiful abundant life",
+              "video_prompt": "Person walking through a sunlit lavender field stretching to the horizon. Gentle breeze moving the flowers. They reach down to touch the lavender, smiling peacefully. Smooth steadicam tracking. Warm purple and gold tones, dreamy cinematic quality.",
+              "mood": "serene"
+            }
+          ],
+          "music_mood": "uplifting ambient with gentle piano and warm synthesizer pads",
+          "closing_affirmation": "I Am Grateful For My Beautiful Life"
+        }
+      }
+    ],
+    "stop_reason": "tool_use",
+    "usage": {
+      "input_tokens": 800,
+      "output_tokens": 1200
+    }
+  },
+  "structured_response_no_tool_use": {
+    "id": "msg_test_004",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-sonnet-4-5-20250514",
+    "content": [
+      {
+        "type": "text",
+        "text": "Here are the scenes for your mind movie."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "usage": {
+      "input_tokens": 800,
+      "output_tokens": 50
+    }
+  }
+}

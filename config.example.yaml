@@ -1,0 +1,65 @@
+# Mind Movie Generator - Configuration File
+# Copy this file to config.yaml and customize as needed
+# Environment variables from .env take precedence over these values
+
+# Video generation settings
+video:
+  # Video generation model
+  # Options: veo-3.1-fast-generate-preview, veo-3.1-generate-preview,
+  #          veo-3.0-fast-generate-001, veo-3.0-generate-001
+  model: "veo-3.1-fast-generate-preview"
+
+  # Output resolution: 720p, 1080p, or 4K (4K only for Veo 3.1)
+  resolution: "1080p"
+
+  # Aspect ratio: 16:9 or 9:16
+  aspect_ratio: "16:9"
+
+  # Generate audio with video (Veo 3+ only)
+  generate_audio: true
+
+  # Maximum concurrent video generations (respects rate limits)
+  max_concurrent: 5
+
+  # Maximum retry attempts for failed generations
+  max_retries: 3
+
+# Mind movie structure settings
+movie:
+  # Duration of each scene in seconds (video clips are 8s from Veo)
+  scene_duration: 8
+
+  # Target number of scenes (10-15 recommended)
+  num_scenes: 12
+
+  # Title card duration in seconds
+  title_duration: 5
+
+  # Closing card duration in seconds
+  closing_duration: 5
+
+  # Crossfade duration between scenes in seconds
+  crossfade_duration: 0.5
+
+  # Output video frame rate
+  fps: 24
+
+# Music settings
+music:
+  # Music source: file, mubert, or musicgen
+  source: "file"
+
+  # Path to background music file (if source is "file")
+  # Leave empty to skip background music
+  file_path: ""
+
+  # Music volume (0.0 to 1.0)
+  volume: 0.20
+
+# Build settings
+build:
+  # Directory for intermediate files and pipeline state
+  build_dir: "build"
+
+  # Default output file path
+  output_path: "mind_movie.mp4"

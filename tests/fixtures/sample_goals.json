@@ -1,0 +1,54 @@
+{
+  "title": "My Dream Life",
+  "conversation_id": "test-conversation-001",
+  "categories": [
+    {
+      "category": "health",
+      "vision": "Vibrant and energetic every day",
+      "visual_details": "Running on a coastal trail at sunrise, ocean sparkling, fresh morning air",
+      "actions": "Running, doing yoga on a sunlit deck, preparing fresh meals",
+      "emotions": "Powerful, alive, grateful, unstoppable",
+      "skipped": false
+    },
+    {
+      "category": "wealth",
+      "vision": "Financially free with multiple income streams",
+      "visual_details": "Beautiful modern home with floor-to-ceiling windows overlooking mountains",
+      "actions": "Reviewing investments on a laptop, walking through my dream home",
+      "emotions": "Secure, abundant, generous, peaceful",
+      "skipped": false
+    },
+    {
+      "category": "career",
+      "vision": "Leading a creative team doing meaningful work",
+      "visual_details": "Modern open-plan office with natural light, collaborative spaces",
+      "actions": "Presenting to an engaged audience, mentoring team members",
+      "emotions": "Passionate, respected, fulfilled, inspired",
+      "skipped": false
+    },
+    {
+      "category": "relationships",
+      "vision": "Deep loving connections with family and friends",
+      "visual_details": "Outdoor dinner with friends under string lights, warm evening",
+      "actions": "Laughing together, sharing stories, embracing loved ones",
+      "emotions": "Loved, connected, joyful, grateful",
+      "skipped": false
+    },
+    {
+      "category": "growth",
+      "vision": "Constantly learning and evolving as a person",
+      "visual_details": "Cozy reading nook by a window with morning light, bookshelves",
+      "actions": "Reading, meditating, journaling, attending workshops",
+      "emotions": "Curious, peaceful, inspired, wise",
+      "skipped": false
+    },
+    {
+      "category": "lifestyle",
+      "vision": "Travelling the world freely and living adventurously",
+      "visual_details": "Villa overlooking Mediterranean sea, exploring ancient cities",
+      "actions": "Exploring new places, enjoying sunsets, tasting local cuisine",
+      "emotions": "Free, adventurous, grateful, amazed",
+      "skipped": false
+    }
+  ]
+}
