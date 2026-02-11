@@ -53,7 +53,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Relax affirmation validator and update scene generation prompt
+### [x] Step: Relax affirmation validator and update scene generation prompt
+<!-- chat-id: d22f08b1-9d47-42a5-815b-da4b18e0fb52 -->
 
 Fix the primary crash: the `Scene.validate_affirmation_format()` validator in `src/mindmovie/models/scenes.py` rejects valid first-person affirmations that don't start with "I am/have/feel/live". Also update the LLM prompt.
 

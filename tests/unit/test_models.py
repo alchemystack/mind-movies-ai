@@ -53,13 +53,22 @@ class TestSceneModels:
         s = self._make_scene()
         assert s.index == 0
 
-    def test_invalid_prefix_rejected(self) -> None:
-        with pytest.raises(ValueError, match="must start with"):
+    def test_non_first_person_rejected(self) -> None:
+        with pytest.raises(ValueError, match="must be first-person"):
             self._make_scene(affirmation="My life is amazing and beautiful today")
 
-    def test_valid_prefixes(self) -> None:
-        for prefix in ["I am great", "I have abundance", "I feel strong", "I live freely"]:
-            self._make_scene(affirmation=prefix, video_prompt="A" * 50)
+    def test_valid_first_person_affirmations(self) -> None:
+        for affirmation in [
+            "I am great and healthy",
+            "I have abundance in life",
+            "I feel strong every day",
+            "I live freely and joyfully",
+            "I lead groundbreaking research",
+            "I dance with amazing friends",
+            "I work with brilliant innovators",
+            "I embrace challenges with calm",
+        ]:
+            self._make_scene(affirmation=affirmation, video_prompt="A" * 50)
 
 
 class TestMindMovieSpec:

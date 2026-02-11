@@ -6,9 +6,6 @@ from pydantic import BaseModel, Field, field_validator
 
 from .goals import LifeCategory
 
-# Valid affirmation prefixes (case-insensitive)
-AFFIRMATION_PREFIXES = ("i am", "i have", "i feel", "i live")
-
 
 class Scene(BaseModel):
     """A single scene in the mind movie with affirmation and video prompt."""
@@ -19,7 +16,7 @@ class Scene(BaseModel):
         ...,
         min_length=5,
         max_length=100,
-        description="Present-tense affirmation (5-12 words recommended)",
+        description="First-person present-tense affirmation (5-12 words recommended)",
     )
     video_prompt: str = Field(
         ...,
@@ -36,17 +33,15 @@ class Scene(BaseModel):
         """Ensure affirmation follows proper format rules.
 
         Affirmations must:
-        - Start with 'I am', 'I have', 'I feel', or 'I live'
+        - Start with 'I' (first-person)
         - Be present tense (as if already true)
         - Be positive (no negative words)
         """
-        lower_v = v.lower().strip()
+        stripped = v.strip()
 
-        # Check prefix
-        if not any(lower_v.startswith(prefix) for prefix in AFFIRMATION_PREFIXES):
+        if not stripped.startswith("I "):
             raise ValueError(
-                f"Affirmation must start with one of: {', '.join(AFFIRMATION_PREFIXES)}. "
-                f"Got: '{v[:20]}...'"
+                f"Affirmation must be first-person (start with 'I'). Got: '{v[:30]}...'"
             )
 
         return v

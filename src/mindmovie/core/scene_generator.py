@@ -22,11 +22,12 @@ Create scenes distributed across the categories provided. \
 Each scene must have:
 
 1. **affirmation**: First person, present tense, positive, emotionally charged, 5-12 words.
-   - Must start with "I am", "I have", "I feel", or "I live"
+   - Must start with "I" (first-person perspective)
    - Present tense only (as if already true)
    - No negative words (no "not", "don't", "never")
    - Specific and emotionally charged
    Examples: "I am radiantly healthy and full of energy", \
+"I lead groundbreaking research in my field", \
 "I have multiple streams of abundant income"
 
 2. **video_prompt**: Cinematic prompt following this formula:
