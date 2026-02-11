@@ -18,7 +18,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: de0573a0-740e-4918-8c81-58aa86437b03 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -52,16 +53,23 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Relax affirmation validator and update scene generation prompt
 
-Implement the task according to the technical specification and general engineering best practices.
+Fix the primary crash: the `Scene.validate_affirmation_format()` validator in `src/mindmovie/models/scenes.py` rejects valid first-person affirmations that don't start with "I am/have/feel/live". Also update the LLM prompt.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+- Remove `AFFIRMATION_PREFIXES` constant
+- Replace `validate_affirmation_format()` with a relaxed validator that checks "starts with I" only
+- Update `GENERATION_PROMPT` in `src/mindmovie/core/scene_generator.py` to remove the prefix constraint
+- Update unit tests in `tests/unit/test_models.py` for the new validation rules
+- Run `ruff check src/ tests/` and `pytest tests/ -v` to verify
+
+### [ ] Step: Fix hardcoded Anthropic model default and update .env.example
+
+Change the default model from Opus to Sonnet for cost-effectiveness.
+
+- Change default in `src/mindmovie/config/settings.py` (`anthropic_model` field) to `claude-sonnet-4-20250514`
+- Change `DEFAULT_MODEL` in `src/mindmovie/api/anthropic_client.py` to match
+- Add `ANTHROPIC_MODEL` to `.env.example` with documentation
+- Update any test fixtures referencing the old model default
+- Run `ruff check src/ tests/`, `mypy src/`, and `pytest tests/ -v` to verify all passes
+- Write report to `{@artifacts_path}/report.md`
