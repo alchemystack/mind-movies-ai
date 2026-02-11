@@ -59,7 +59,6 @@ def config(
             "Model": settings.video.model,
             "Resolution": settings.video.resolution,
             "Aspect Ratio": settings.video.aspect_ratio,
-            "Generate Audio": str(settings.video.generate_audio),
             "Max Concurrent": str(settings.video.max_concurrent),
             "Max Retries": str(settings.video.max_retries),
         },

@@ -20,12 +20,11 @@ class VideoGeneratorProtocol(Protocol):
         duration: int = 8,
         resolution: str = "1080p",
         aspect_ratio: str = "16:9",
-        generate_audio: bool = True,
     ) -> Path:
         """Generate a video clip from a text prompt."""
         ...
 
-    def estimate_cost(self, duration: int, with_audio: bool) -> float:
+    def estimate_cost(self, duration: int) -> float:
         """Estimate cost for generating a video of given duration."""
         ...
 

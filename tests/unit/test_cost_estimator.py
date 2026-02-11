@@ -23,18 +23,18 @@ def sample_spec(fixtures_dir: Path) -> MindMovieSpec:
         return MindMovieSpec.model_validate(json.load(f))
 
 
-def _settings(model: str = "veo-3.1-fast-generate-preview", audio: bool = False) -> Settings:
+def _settings(model: str = "veo-3.1-fast-generate-preview") -> Settings:
     return Settings(
-        api=APISettings(), video=VideoSettings(model=model, generate_audio=audio),
+        api=APISettings(), video=VideoSettings(model=model),
         music=MusicSettings(), movie=MovieSettings(), build=BuildSettings(),
     )
 
 
 class TestCostEstimator:
-    def test_veo_fast_no_audio(self) -> None:
+    def test_veo_fast_cost(self) -> None:
         est = CostEstimator(_settings())
         cost = est.estimate_video_cost(num_scenes=12, scene_duration=8)
-        assert cost == pytest.approx(9.60)
+        assert cost == pytest.approx(14.40)
 
     def test_full_estimate(self, sample_spec: MindMovieSpec) -> None:
         est = CostEstimator(_settings())

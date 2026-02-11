@@ -91,7 +91,6 @@ class SceneVideoGenerator:
                 duration=self.settings.movie.scene_duration,
                 resolution=self.settings.video.resolution,
                 aspect_ratio=self.settings.video.aspect_ratio,
-                generate_audio=self.settings.video.generate_audio,
             )
 
             # Mark as complete

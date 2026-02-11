@@ -29,13 +29,13 @@ DEFAULT_MODEL = "veo-3.1-fast-generate-preview"
 # Polling interval in seconds while waiting for video generation
 _POLL_INTERVAL = 10
 
-# Per-second cost by model variant
-_COST_PER_SECOND: dict[str, dict[str, float]] = {
-    "veo-3.1-fast-generate-preview": {"with_audio": 0.15, "no_audio": 0.10},
-    "veo-3.1-generate-preview": {"with_audio": 0.40, "no_audio": 0.30},
-    "veo-3.0-fast-generate-001": {"with_audio": 0.15, "no_audio": 0.10},
-    "veo-3.0-generate-001": {"with_audio": 0.40, "no_audio": 0.30},
-    "veo-2.0-generate-001": {"with_audio": 0.0, "no_audio": 0.35},
+# Per-second cost by model variant (Veo 3.x always generates audio natively)
+_COST_PER_SECOND: dict[str, float] = {
+    "veo-3.1-fast-generate-preview": 0.15,
+    "veo-3.1-generate-preview": 0.40,
+    "veo-3.0-fast-generate-001": 0.15,
+    "veo-3.0-generate-001": 0.40,
+    "veo-2.0-generate-001": 0.35,
 }
 
 # Transient errors worth retrying
@@ -50,8 +50,8 @@ class VeoClient:
     """Google Veo video generation client implementing VideoGeneratorProtocol.
 
     Generates 8-second video clips from text prompts using Google's Veo models.
-    Supports configurable resolution (720p/1080p/4K), aspect ratio (16:9/9:16),
-    and optional native audio generation (Veo 3+ only).
+    Supports configurable resolution (720p/1080p/4K) and aspect ratio (16:9/9:16).
+    Veo 3.x models natively generate audio as part of the video output.
     """
 
     def __init__(
@@ -70,7 +70,6 @@ class VeoClient:
         output_path: Path,
         resolution: str,
         aspect_ratio: str,
-        generate_audio: bool,
         negative_prompt: str | None,
     ) -> Path:
         """Synchronous generate + poll loop run inside a thread.
@@ -81,7 +80,6 @@ class VeoClient:
         config = types.GenerateVideosConfig(
             aspect_ratio=aspect_ratio,
             resolution=resolution,
-            generate_audio=generate_audio,
             person_generation="allow_adult",
             number_of_videos=1,
         )
@@ -89,10 +87,9 @@ class VeoClient:
             config.negative_prompt = negative_prompt
 
         logger.info(
-            "Starting Veo generation: model=%s, resolution=%s, audio=%s",
+            "Starting Veo generation: model=%s, resolution=%s",
             self.model,
             resolution,
-            generate_audio,
         )
 
         operation = self.client.models.generate_videos(
@@ -141,7 +138,6 @@ class VeoClient:
         duration: int = 8,  # noqa: ARG002 — part of VideoGeneratorProtocol
         resolution: str = "1080p",
         aspect_ratio: str = "16:9",
-        generate_audio: bool = True,
         negative_prompt: str | None = None,
     ) -> Path:
         """Generate a video clip from a text prompt.
@@ -158,7 +154,6 @@ class VeoClient:
             duration: Accepted for protocol conformance (Veo produces 8s clips).
             resolution: Output resolution — "720p", "1080p", or "4K".
             aspect_ratio: "16:9" or "9:16".
-            generate_audio: Whether Veo should generate native audio.
             negative_prompt: Things to avoid in the generated video.
 
         Returns:
@@ -174,23 +169,20 @@ class VeoClient:
             output_path,
             resolution,
             aspect_ratio,
-            generate_audio,
             negative_prompt,
         )
 
-    def estimate_cost(self, duration: int, with_audio: bool = True) -> float:
+    def estimate_cost(self, duration: int) -> float:
         """Estimate cost for generating a video of given duration.
 
         Args:
             duration: Video duration in seconds.
-            with_audio: Whether native audio is enabled.
 
         Returns:
             Estimated cost in USD.
         """
-        cost_key = "with_audio" if with_audio else "no_audio"
-        rates = _COST_PER_SECOND.get(
+        rate = _COST_PER_SECOND.get(
             self.model,
             _COST_PER_SECOND[DEFAULT_MODEL],
         )
-        return duration * rates[cost_key]
+        return duration * rate
