@@ -41,7 +41,8 @@ class TestGoalModels:
 class TestSceneModels:
     def _make_scene(self, **overrides: object) -> Scene:
         defaults = {
-            "index": 0, "category": LifeCategory.HEALTH,
+            "index": 0, "name": "coastal_sunrise_run",
+            "category": LifeCategory.HEALTH,
             "affirmation": "I am radiantly healthy and full of energy",
             "video_prompt": "A person runs along a coastal trail at sunrise with warm cinematic lighting and tracking camera movement.",
             "mood": "energetic",
@@ -79,7 +80,8 @@ class TestMindMovieSpec:
         return MindMovieSpec(
             scenes=[
                 Scene(
-                    index=i, category=cats[i % len(cats)],
+                    index=i, name=f"test_scene_{i}",
+                    category=cats[i % len(cats)],
                     affirmation=f"I am living my best life scene {i + 1}",
                     video_prompt=f"Scene {i}: cinematic shot with beautiful lighting and camera movement through setting.",
                     mood=all_moods[i % len(all_moods)],

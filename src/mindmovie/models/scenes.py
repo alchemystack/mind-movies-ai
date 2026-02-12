@@ -11,6 +11,12 @@ class Scene(BaseModel):
     """A single scene in the mind movie with affirmation and video prompt."""
 
     index: int = Field(..., ge=0, description="Scene index (0-based)")
+    name: str = Field(
+        ...,
+        min_length=3,
+        max_length=60,
+        description="Unique descriptive scene identifier (e.g. 'coastal_sunrise_run')",
+    )
     category: LifeCategory = Field(..., description="Life category this scene belongs to")
     affirmation: str = Field(
         ...,
@@ -21,7 +27,7 @@ class Scene(BaseModel):
     video_prompt: str = Field(
         ...,
         min_length=50,
-        description="Cinematic video prompt for Veo: subject + action + scene + camera + style + lighting",
+        description="Photorealistic cinematography prompt for video generation model",
     )
     mood: Literal["warm", "energetic", "peaceful", "romantic", "confident", "joyful", "serene"] = Field(
         ..., description="Emotional mood of the scene"

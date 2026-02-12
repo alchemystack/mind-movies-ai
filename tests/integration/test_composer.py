@@ -38,7 +38,8 @@ def _make_spec(n: int = 10) -> MindMovieSpec:
     cats = list(LifeCategory)
     return MindMovieSpec(
         scenes=[
-            Scene(index=i, category=cats[i % len(cats)],
+            Scene(index=i, name=f"test_scene_{i}",
+                  category=cats[i % len(cats)],
                   affirmation=f"I am living my best life scene {i + 1}",
                   video_prompt="A" * 50, mood=moods[i])
             for i in range(n)
@@ -91,14 +92,16 @@ class TestVideoComposer:
         video_path = tmp_path / "scene.mp4"
         create_test_video(video_path, duration=5.0, size=(320, 180))
         composer = VideoComposer(_movie_settings(), _music_settings(), "720p")
-        scene = Scene(index=0, category=LifeCategory.HEALTH,
+        scene = Scene(index=0, name="test_scene_clip",
+                      category=LifeCategory.HEALTH,
                       affirmation="I am strong", video_prompt="A" * 50, mood="energetic")
         clip = composer._create_scene_clip(scene, video_path)
         assert clip.duration <= 5
 
     def test_missing_video_raises(self, tmp_path: Path) -> None:
         composer = VideoComposer(_movie_settings(), _music_settings(), "720p")
-        scene = Scene(index=0, category=LifeCategory.HEALTH,
+        scene = Scene(index=0, name="test_missing_video",
+                      category=LifeCategory.HEALTH,
                       affirmation="I am strong", video_prompt="A" * 50, mood="energetic")
         with pytest.raises(CompositionError):
             composer._create_scene_clip(scene, tmp_path / "nope.mp4")

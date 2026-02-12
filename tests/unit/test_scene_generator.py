@@ -132,6 +132,24 @@ class TestGenerationPrompt:
     def test_prompt_mentions_initial_vision(self) -> None:
         assert "INITIAL VISION" in GENERATION_PROMPT
 
+    def test_prompt_forbids_speech(self) -> None:
+        assert "NO SPEECH" in GENERATION_PROMPT
+
+    def test_prompt_requires_visual_only(self) -> None:
+        assert "VISUAL-ONLY" in GENERATION_PROMPT
+
+    def test_prompt_addresses_video_model_achievability(self) -> None:
+        assert "KEEP IT SIMPLE AND ACHIEVABLE" in GENERATION_PROMPT
+
+    def test_prompt_prioritizes_emotion(self) -> None:
+        assert "EMOTIONAL EXPRESSIVENESS" in GENERATION_PROMPT
+
+    def test_prompt_requires_photorealism(self) -> None:
+        assert "PHOTOREALISTIC" in GENERATION_PROMPT
+
+    def test_prompt_references_camera_technique(self) -> None:
+        assert "CAMERA-FIRST" in GENERATION_PROMPT
+
 
 class TestFixtureValidation:
     def test_fixture_scenes_validate(self, sample_scenes_data: dict) -> None:

@@ -25,7 +25,8 @@ def _make_scenes() -> MindMovieSpec:
     return MindMovieSpec(
         scenes=[
             Scene(
-                index=i, category=cats[i % len(cats)],
+                index=i, name=f"test_scene_{i}",
+                category=cats[i % len(cats)],
                 affirmation=f"I am living my best life scene {i + 1}",
                 video_prompt=f"Scene {i}: cinematic shot with camera movement and lighting.",
                 mood=moods[i],

@@ -3,6 +3,7 @@
   "scenes": [
     {
       "index": 0,
+      "name": "coastal_sunrise_run",
       "category": "health",
       "affirmation": "I am radiantly healthy and full of energy",
       "video_prompt": "A tall athletic man with light skin and short brown hair in athletic wear runs along a beautiful coastal trail at sunrise. The ocean sparkles to his left, waves crashing gently. He moves with effortless strength and joy. Tracking shot following from the side. Warm morning light, cinematic, saturated colors, shallow depth of field.",
@@ -10,6 +11,7 @@
     },
     {
       "index": 1,
+      "name": "mountaintop_yoga_dawn",
       "category": "health",
       "affirmation": "I am strong and vibrant every single day",
       "video_prompt": "A tall athletic man with short brown hair doing yoga on a sunlit wooden deck overlooking misty mountains at dawn. Slow graceful movements flow into warrior pose. Wide establishing shot pulling back to reveal the vast mountain landscape. Soft golden light, peaceful atmosphere, cinematic quality.",
@@ -17,6 +19,7 @@
     },
     {
       "index": 2,
+      "name": "penthouse_city_view",
       "category": "wealth",
       "affirmation": "I am financially free and abundantly prosperous",
       "video_prompt": "A confident man with light skin and blue eyes in elegant clothing walks through a sunlit modern penthouse with floor-to-ceiling windows overlooking a city skyline. He smiles and turns toward the panoramic view. Slow dolly forward. Warm golden hour light, cinematic color grading, shallow depth of field.",
@@ -24,6 +27,7 @@
     },
     {
       "index": 3,
+      "name": "home_office_review",
       "category": "wealth",
       "affirmation": "I have multiple streams of abundant income",
       "video_prompt": "A tall man with short brown hair sitting at a beautiful mahogany desk in a modern home office with large windows. Sunlight streams in as he reviews documents with a satisfied smile. Slow push-in camera movement. Warm professional lighting, aspirational luxury aesthetic, soft bokeh.",
@@ -31,6 +35,7 @@
     },
     {
       "index": 4,
+      "name": "conference_presentation",
       "category": "career",
       "affirmation": "I am passionate about my meaningful work",
       "video_prompt": "An athletic man with light skin and short brown hair presenting confidently to an engaged audience in a modern conference room. Dynamic hand gestures, warm smiles exchanged with the audience. Medium close-up with shallow depth of field. Bright professional lighting, contemporary aesthetic.",
@@ -38,6 +43,7 @@
     },
     {
       "index": 5,
+      "name": "creative_office_walkthrough",
       "category": "career",
       "affirmation": "I am a respected leader making a difference",
       "video_prompt": "A tall man with blue eyes and short brown hair walking through a creative open-plan office, greeting team members warmly. People smile and engage enthusiastically. Smooth tracking shot following him through the space. Bright natural light from large windows, modern creative workspace, uplifting energy.",
@@ -45,6 +51,7 @@
     },
     {
       "index": 6,
+      "name": "candlelit_dinner_friends",
       "category": "relationships",
       "affirmation": "I am surrounded by loving supportive people",
       "video_prompt": "Close-up of friends laughing together at an outdoor dinner table with candles and string lights at dusk. Warm embraces and genuine joy shared between them. Gentle push-in camera movement. Romantic warm color palette, golden hour, shallow depth of field.",
@@ -52,6 +59,7 @@
     },
     {
       "index": 7,
+      "name": "sunset_beach_walk",
       "category": "relationships",
       "affirmation": "I have deep meaningful connections with others",
       "video_prompt": "Two people walking hand in hand along a sunset beach, waves gently lapping at their feet. They turn to each other and smile warmly. Slow motion wide shot. Golden hour light, cinematic warmth, peaceful ocean backdrop, film grain.",
@@ -59,6 +67,7 @@
     },
     {
       "index": 8,
+      "name": "rainy_reading_nook",
       "category": "growth",
       "affirmation": "I am constantly growing and evolving beautifully",
       "video_prompt": "A man with light skin and short brown hair sitting in a cozy reading nook by a large window, rain outside, absorbed in a book with a content expression. Warm cup of tea nearby. Slow dolly in. Soft natural light, intimate atmosphere, warm tones, cinematic grain.",
@@ -66,6 +75,7 @@
     },
     {
       "index": 9,
+      "name": "garden_sunrise_meditation",
       "category": "growth",
       "affirmation": "I am becoming the best version of myself",
       "video_prompt": "A tall athletic man with short brown hair meditating peacefully in a beautiful garden at sunrise, surrounded by blooming flowers and gentle morning mist. Birds flying overhead. Slow crane shot rising upward. Ethereal golden light, dreamlike quality, aspirational serenity.",
@@ -73,6 +83,7 @@
     },
     {
       "index": 10,
+      "name": "mediterranean_villa_balcony",
       "category": "lifestyle",
       "affirmation": "I am living my dream life with total freedom",
       "video_prompt": "A tall man with light skin and blue eyes standing on the balcony of a beautiful villa overlooking turquoise Mediterranean waters. He spreads his arms wide, embracing the view and the breeze. Slow aerial pullback revealing the stunning coastline. Brilliant sunshine, vivid colors, cinematic grandeur.",
@@ -80,6 +91,7 @@
     },
     {
       "index": 11,
+      "name": "lavender_field_stroll",
       "category": "lifestyle",
       "affirmation": "I am grateful for my beautiful abundant life",
       "video_prompt": "An athletic man with short brown hair walking through a sunlit lavender field stretching to the horizon. Gentle breeze moving the flowers. He reaches down to touch the lavender, smiling peacefully. Smooth steadicam tracking shot. Warm purple and gold tones, dreamy cinematic quality.",
